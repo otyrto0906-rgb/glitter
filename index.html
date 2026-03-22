@@ -121,6 +121,8 @@ header{display:flex;align-items:flex-end;justify-content:space-between;padding:4
 .mc-reason{font-size:12px;line-height:1.75;color:var(--ink-2);border-top:1px solid var(--paper-3);padding-top:10px}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-family:'Shippori Mincho',serif;font-size:13px;font-weight:600;color:var(--purple);background:var(--purple-lt);border:1px solid rgba(80,70,200,.2);border-radius:20px;cursor:pointer;text-decoration:none;transition:background .15s,transform .1s;letter-spacing:.04em}
+.nav-btn:hover{background:#dddafc;transform:translateY(-1px)}
 
 /* Quiz section */
 .quiz-divider{height:1px;background:var(--paper-3);margin:20px 0 18px}
@@ -137,14 +139,23 @@ header{display:flex;align-items:flex-end;justify-content:space-between;padding:4
 <body>
 <div class="shell">
 
-  <header>
+  <!-- ナビゲーション -->
+<nav style="display:flex;align-items:center;justify-content:flex-end;padding:12px 0 0;gap:8px">
+  <a href="index.html" style="font-family:'DM Mono',monospace;font-size:11px;padding:6px 14px;border-radius:20px;text-decoration:none;background:var(--ink);color:var(--paper);letter-spacing:.08em">ゲスト診断</a>
+
+</nav>
+
+<header>
     <div>
       <div class="logo">glitt<em>e</em>r</div>
       <div class="logo-sub">Business Compatibility</div>
     </div>
-    <div class="member-count">
-      <strong id="memberNum" class="mc-pulse">…</strong>
-      members
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="member-count">
+        <strong id="memberNum" class="mc-pulse">…</strong>
+        members
+      </div>
+      <a class="nav-btn" href="member.html">メンバーページ →</a>
     </div>
   </header>
 
@@ -369,11 +380,17 @@ document.addEventListener('change', e => {
 // ── 起動時にメンバー自動読込 ─────────────────────────────────
 window.addEventListener('DOMContentLoaded', initMembers);
 
-async function initMembers() {
-  try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
+function initMembers() {
+  // JSONP で読み込む（CORSを回避）
+  const callbackName = 'glitterCallback_' + Date.now();
+  const timeout = setTimeout(() => {
+    showMemberError('タイムアウト：Apps Scriptに接続できませんでした');
+    delete window[callbackName];
+  }, 10000);
+
+  window[callbackName] = function(data) {
+    clearTimeout(timeout);
+    delete window[callbackName];
     MEMBERS = (data.members || []).map(m => ({
       ...m,
       axisA  : Number(m.axisA)   || 0,
@@ -386,14 +403,29 @@ async function initMembers() {
     const el = document.getElementById('memberNum');
     el.textContent = MEMBERS.length;
     el.classList.remove('mc-pulse');
-  } catch(e) {
-    const el = document.getElementById('memberNum');
-    el.textContent = '!';
-    el.classList.remove('mc-pulse');
-    el.style.color = 'var(--coral)';
-    document.getElementById('initErrorMsg').textContent = e.message;
-    document.getElementById('initError').style.display = 'block';
-  }
+    // scriptタグを削除
+    const s = document.getElementById('jsonp-script');
+    if (s) s.remove();
+  };
+
+  const script = document.createElement('script');
+  script.id  = 'jsonp-script';
+  script.src = API_URL + '?callback=' + callbackName;
+  script.onerror = () => {
+    clearTimeout(timeout);
+    delete window[callbackName];
+    showMemberError('スクリプト読み込みエラー');
+  };
+  document.head.appendChild(script);
+}
+
+function showMemberError(msg) {
+  const el = document.getElementById('memberNum');
+  el.textContent = '!';
+  el.classList.remove('mc-pulse');
+  el.style.color = 'var(--coral)';
+  document.getElementById('initErrorMsg').textContent = msg;
+  document.getElementById('initError').style.display = 'block';
 }
 
 
