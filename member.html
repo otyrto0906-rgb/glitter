@@ -3,95 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>glitter — メンバーページ</title>
+<title>glitter — ゲスト相性診断</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root{
-  --ink:#16130f;--ink-2:#48443e;--ink-3:#918d87;--ink-4:#bab6b0;
-  --paper:#f8f5f0;--paper-2:#edeae3;--paper-3:#e0dcd3;
-  --gold:#b08c3a;--gold-lt:#f5e9c8;
-  --purple:#5046c8;--purple-2:#7b72e0;--purple-lt:#eceafc;
-  --teal:#1a7060;--teal-lt:#d0ede8;
-  --coral:#c04030;--coral-lt:#fce5e0;
-  --r:10px;--r-lg:18px;--r-xl:24px;
+:root {
+  --ink:       #16130f;
+  --ink-2:     #48443e;
+  --ink-3:     #918d87;
+  --ink-4:     #bab6b0;
+  --paper:     #f8f5f0;
+  --paper-2:   #edeae3;
+  --paper-3:   #e0dcd3;
+  --gold:      #b08c3a;
+  --gold-lt:   #f5e9c8;
+  --purple:    #5046c8;
+  --purple-2:  #7b72e0;
+  --purple-lt: #eceafc;
+  --teal:      #1a7060;
+  --teal-lt:   #d0ede8;
+  --coral:     #c04030;
+  --coral-lt:  #fce5e0;
+  --r:         10px;
+  --r-lg:      18px;
+  --r-xl:      24px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.03;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:180px}
 
-/* ── Login ── */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.login-box{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-xl);padding:40px 36px;width:100%;max-width:380px}
-.login-logo{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:600;letter-spacing:.06em;margin-bottom:4px}
-.login-logo em{font-style:normal;color:var(--purple)}
-.login-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:32px}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-bottom:7px}
-.field input,.field select{width:100%;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--paper-2);border:1px solid var(--paper-3);border-radius:var(--r);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
-.field input[type=password]{letter-spacing:.12em}
+.shell{max-width:1100px;margin:0 auto;padding:0 28px 100px}
+
+header{display:flex;align-items:flex-end;justify-content:space-between;padding:40px 0;border-bottom:1px solid var(--paper-3);margin-bottom:52px}
+.logo{font-family:'Shippori Mincho',serif;font-size:28px;font-weight:600;letter-spacing:.06em}
+.logo em{font-style:normal;color:var(--purple)}
+.logo-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
+.member-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-3);text-align:right}
+.member-count strong{color:var(--purple);font-size:20px;display:block;line-height:1.1}
+.mc-pulse{animation:mpulse 1s ease-in-out infinite}
+@keyframes mpulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.layout{display:grid;grid-template-columns:340px 1fr;gap:36px;align-items:start}
+@media(max-width:820px){.layout{grid-template-columns:1fr}}
+
+.panel{background:var(--paper-2);border:1px solid var(--paper-3);border-radius:var(--r-xl);padding:28px;position:sticky;top:24px}
+.panel-title{font-family:'Shippori Mincho',serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:22px}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
+.field input,.field select{width:100%;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r);outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
 .field input:focus,.field select:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-lt)}
+.field input::placeholder{color:var(--ink-4)}
 .select-wrap{position:relative}
 .select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--ink-3);pointer-events:none}
-.btn{width:100%;padding:13px;margin-top:8px;font-family:'Shippori Mincho',serif;font-size:15px;font-weight:600;letter-spacing:.06em;color:#fff;background:var(--ink);border:none;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .1s}
+
+.btn{width:100%;padding:14px;margin-top:10px;font-family:'Shippori Mincho',serif;font-size:15px;font-weight:600;letter-spacing:.06em;color:#fff;background:var(--ink);border:none;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .1s}
 .btn:hover{background:var(--ink-2)}
 .btn:active{transform:scale(.98)}
-.login-err{font-size:12px;color:var(--coral);margin-top:10px;text-align:center;min-height:18px}
-.login-hint{font-size:11px;color:var(--ink-3);text-align:center;margin-top:16px}
+.btn:disabled{background:var(--ink-3);cursor:not-allowed}
 
-/* ── App shell ── */
-.app{display:none}
-.app.show{display:block}
-.shell{max-width:900px;margin:0 auto;padding:0 24px 80px}
-header{display:flex;align-items:center;justify-content:space-between;padding:32px 0 36px;border-bottom:1px solid var(--paper-3);margin-bottom:40px}
-.logo{font-family:'Shippori Mincho',serif;font-size:24px;font-weight:600;letter-spacing:.06em}
-.logo em{font-style:normal;color:var(--purple)}
-.logo-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:.18em;text-transform:uppercase;margin-top:3px}
-.user-pill{display:flex;align-items:center;gap:10px}
-.user-name{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--ink-2)}
-.logout-btn{font-size:11px;color:var(--ink-3);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'DM Sans',sans-serif}
-.logout-btn:hover{color:var(--ink)}
+.results{min-height:400px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px;text-align:center;opacity:.4}
+.empty-glyph{font-size:36px;margin-bottom:14px}
+.empty-text{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--ink-2);line-height:1.9}
 
-/* ── Profile card ── */
-.profile-card{background:var(--ink);color:var(--paper);border-radius:var(--r-xl);padding:32px;margin-bottom:32px;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
-.profile-card::before{content:'';position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--purple);opacity:.1}
-.profile-card::after{content:'';position:absolute;right:20px;bottom:-40px;width:120px;height:120px;border-radius:50%;background:var(--teal);opacity:.07}
-.pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.pc-left{}
-.pc-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(255,255,255,.3);margin-bottom:8px}
-.pc-name{font-family:'Shippori Mincho',serif;font-size:28px;font-weight:600;margin-bottom:4px}
-.pc-meta{font-size:13px;color:rgba(255,255,255,.48);margin-bottom:14px}
-.type-pill{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500}
+.init-error{background:var(--coral-lt);border:1px solid var(--coral);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:24px;display:none}
+.init-error-title{font-size:13px;font-weight:500;color:var(--coral);margin-bottom:6px}
+.init-error-msg{font-size:12px;color:var(--ink-2);line-height:1.7}
+
+.guest-card{background:var(--ink);color:var(--paper);border-radius:var(--r-xl);padding:28px;margin-bottom:28px;position:relative;overflow:hidden;display:none}
+.guest-card.show{display:block;animation:fadeUp .45s ease both}
+.guest-card::before{content:'';position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--purple);opacity:.1}
+.guest-card::after{content:'';position:absolute;right:20px;bottom:-40px;width:120px;height:120px;border-radius:50%;background:var(--teal);opacity:.07}
+.gc-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(255,255,255,.3);margin-bottom:10px}
+.gc-name{font-family:'Shippori Mincho',serif;font-size:24px;font-weight:600;margin-bottom:3px}
+.gc-meta{font-size:13px;color:rgba(255,255,255,.48);margin-bottom:16px}
+.type-pill{display:inline-flex;align-items:center;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;margin-bottom:14px}
 .t1{background:rgba(80,70,200,.3);color:#b0a8f5}
 .t2{background:rgba(26,112,96,.3);color:#78d4bc}
 .t3{background:rgba(176,140,58,.3);color:#e8c870}
 .t4{background:rgba(192,64,48,.3);color:#f0a090}
 .t5{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
-.pc-analysis{font-size:13px;line-height:1.85;color:rgba(255,255,255,.76);border-top:1px solid rgba(255,255,255,.1);padding-top:16px;margin-top:16px}
-.radar-wrap{width:220px;height:180px;flex-shrink:0}
-
-/* ── Axes ── */
-.axes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.gc-analysis{font-size:13px;line-height:1.85;color:rgba(255,255,255,.76);border-top:1px solid rgba(255,255,255,.1);padding-top:14px;margin-bottom:18px}
+.axes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .ax-name{font-size:10px;color:rgba(255,255,255,.32);letter-spacing:.08em;margin-bottom:5px}
 .ax-track{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
 .ax-fill{height:100%;border-radius:2px;background:var(--purple-2);transition:width 1.1s cubic-bezier(.4,0,.2,1)}
 .ax-val{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
 
-/* ── Section ── */
-.sec{margin-bottom:36px;animation:fadeUp .5s ease both}
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-hdr{display:none;align-items:center;justify-content:space-between;margin-bottom:18px}
+.sec-hdr.show{display:flex}
 .sec-title{font-family:'Shippori Mincho',serif;font-size:15px;font-weight:600;color:var(--ink-2)}
 .sec-pill{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border-radius:20px;background:var(--paper-2);color:var(--ink-3)}
 
-/* ── Match grid ── */
-.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.match-grid{grid-template-columns:1fr}}
-.mc{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-lg);padding:18px;transition:border-color .2s,transform .2s,box-shadow .2s;animation:fadeUp .4s ease both}
-.mc:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 8px 24px rgba(80,70,200,.08)}
-.mc-top{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.match-grid{grid-template-columns:1fr}}
+.mc{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-lg);padding:20px;cursor:pointer;opacity:0;transform:translateY(10px);transition:border-color .2s,transform .25s,box-shadow .25s,opacity .4s}
+.mc.show{opacity:1;transform:translateY(0)}
+.mc:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 8px 28px rgba(80,70,200,.09)}
+.mc-top{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .rank-badge{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;flex-shrink:0}
 .rb-1{background:var(--gold-lt);color:var(--gold)}
 .rb-2{background:var(--paper-2);color:var(--ink-2)}
@@ -101,123 +112,153 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 .ct-k{background:var(--purple-lt);color:var(--purple)}
 .ct-h{background:var(--teal-lt);color:var(--teal)}
 .ct-o{background:var(--paper-2);color:var(--ink-3)}
-.mc-name{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:600;margin-bottom:2px}
-.mc-sub{font-size:12px;color:var(--ink-3);margin-bottom:10px}
-.score-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.score-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--purple);min-width:40px}
+.mc-name{font-family:'Shippori Mincho',serif;font-size:17px;font-weight:600;margin-bottom:2px}
+.mc-sub{font-size:12px;color:var(--ink-3);margin-bottom:12px}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.score-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--purple);min-width:42px}
 .score-track{flex:1;height:4px;background:var(--paper-2);border-radius:2px;overflow:hidden}
 .score-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--purple-2));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-.mc-reason{font-size:12px;line-height:1.75;color:var(--ink-2);border-top:1px solid var(--paper-3);padding-top:8px}
+.mc-reason{font-size:12px;line-height:1.75;color:var(--ink-2);border-top:1px solid var(--paper-3);padding-top:10px}
 
-/* ── Member list ── */
-.member-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.ml-card{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-lg);padding:14px 16px}
-.ml-name{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;margin-bottom:3px}
-.ml-role{font-size:11px;color:var(--ink-3);margin-bottom:8px}
-.ml-type{font-size:11px;padding:3px 8px;border-radius:20px;display:inline-block;font-weight:500}
-.mt-1{background:var(--purple-lt);color:var(--purple)}
-.mt-2{background:var(--teal-lt);color:var(--teal)}
-.mt-3{background:var(--gold-lt);color:var(--gold)}
-.mt-4{background:var(--coral-lt);color:var(--coral)}
-.mt-5{background:var(--paper-2);color:var(--ink-3)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-family:'Shippori Mincho',serif;font-size:13px;font-weight:600;color:var(--purple);background:var(--purple-lt);border:1px solid rgba(80,70,200,.2);border-radius:20px;cursor:pointer;text-decoration:none;transition:background .15s,transform .1s;letter-spacing:.04em}
+.nav-btn:hover{background:#dddafc;transform:translateY(-1px)}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+/* Quiz section */
+.quiz-divider{height:1px;background:var(--paper-3);margin:20px 0 18px}
+.quiz-section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
+.quiz-q{margin-bottom:18px}
+.quiz-q-text{font-size:13px;font-weight:500;color:var(--ink);line-height:1.5;margin-bottom:10px}
+.quiz-options{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--paper-3);border-radius:var(--r);cursor:pointer;transition:border-color .15s,background .15s;font-size:13px;color:var(--ink-2);background:var(--paper)}
+.quiz-opt:hover{border-color:var(--purple-2);background:var(--purple-lt)}
+.quiz-opt input[type=radio]{accent-color:var(--purple);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.quiz-opt.selected{border-color:var(--purple);background:var(--purple-lt);color:var(--purple)}
 </style>
 </head>
 <body>
+<div class="shell">
 
-<!-- ── ログイン画面 ── -->
-<div class="login-wrap" id="loginWrap">
-  <div class="login-box">
-    <div class="login-logo">glitt<em>e</em>r</div>
-    <div class="login-sub">Member Page</div>
+  <!-- ナビゲーション -->
+<nav style="display:flex;align-items:center;justify-content:flex-end;padding:12px 0 0;gap:8px">
+  <a href="index.html" style="font-family:'DM Mono',monospace;font-size:11px;padding:6px 14px;border-radius:20px;text-decoration:none;background:var(--ink);color:var(--paper);letter-spacing:.08em">ゲスト診断</a>
 
-    <div class="field">
-      <label>あなたの名前</label>
-      <div class="select-wrap">
-        <select id="loginName">
-          <option value="">選択してください</option>
-        </select>
+</nav>
+
+<header>
+    <div>
+      <div class="logo">glitt<em>e</em>r</div>
+      <div class="logo-sub">Business Compatibility</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="member-count">
+        <strong id="memberNum" class="mc-pulse">…</strong>
+        members
       </div>
+      <a class="nav-btn" href="member.html">メンバーページ →</a>
     </div>
-    <div class="field">
-      <label>パスワード</label>
-      <input type="password" id="loginPw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="btn" onclick="doLogin()">ログイン</button>
-    <div class="login-err" id="loginErr"></div>
-    <div class="login-hint">パスワードは運営にお問い合わせください</div>
+  </header>
+
+  <div class="init-error" id="initError">
+    <div class="init-error-title">メンバーデータの読み込みに失敗しました</div>
+    <div class="init-error-msg" id="initErrorMsg"></div>
   </div>
-</div>
 
-<!-- ── メインアプリ ── -->
-<div class="app" id="app">
-  <div class="shell">
-    <header>
-      <div>
-        <div class="logo">glitt<em>e</em>r</div>
-        <div class="logo-sub">Member Page</div>
-      </div>
-      <div class="user-pill">
-        <span class="user-name" id="headerName"></span>
-        <button class="logout-btn" onclick="logout()">ログアウト</button>
-      </div>
-    </header>
-
-    <!-- プロフィールカード -->
-    <div class="profile-card" id="profileCard">
-      <div class="pc-top">
-        <div class="pc-left">
-          <div class="pc-label">YOUR PROFILE</div>
-          <div class="pc-name" id="pcName"></div>
-          <div class="pc-meta" id="pcMeta"></div>
-          <div class="type-pill t1" id="pcType"></div>
-          <div class="pc-analysis" id="pcAnalysis"></div>
+  <div class="layout">
+    <aside>
+      <div class="panel">
+        <div class="panel-title">ゲスト情報</div>
+        <div class="field"><label>氏名</label><input type="text" id="fName" placeholder="例：田中 健二"></div>
+        <div class="field"><label>会社名</label><input type="text" id="fCompany" placeholder="例：株式会社〇〇"></div>
+        <div class="field"><label>業界・事業領域</label><input type="text" id="fIndustry" placeholder="例：SaaS、製造業、広告"></div>
+        <div class="field"><label>役職</label><input type="text" id="fRole" placeholder="例：マーケティング部長"></div>
+        <div class="field">
+          <label>年代</label>
+          <div class="select-wrap">
+            <select id="fAge">
+              <option value="">選択してください</option>
+              <option>20代</option><option>30代</option><option>40代</option>
+              <option>50代</option><option>60代以上</option>
+            </select>
+          </div>
         </div>
-        <div class="radar-wrap">
-          <canvas id="radarChart"></canvas>
+        <!-- アンケート3問 -->
+        <div class="quiz-divider"></div>
+        <div class="quiz-section-label">スタイル診断（3問）</div>
+
+        <div class="quiz-q">
+          <div class="quiz-q-text">Q1. 新しいことを始めるとき、あなたに近いのは？</div>
+          <div class="quiz-options">
+            <label class="quiz-opt"><input type="radio" name="q1" value="a">まず動いて、走りながら考える</label>
+            <label class="quiz-opt"><input type="radio" name="q1" value="b">情報を集めてから慎重に判断する</label>
+            <label class="quiz-opt"><input type="radio" name="q1" value="c">周囲と相談しながら合意して進める</label>
+          </div>
+        </div>
+
+        <div class="quiz-q">
+          <div class="quiz-q-text">Q2. 仕事の約束・締め切りに対して、あなたは？</div>
+          <div class="quiz-options">
+            <label class="quiz-opt"><input type="radio" name="q2" value="a">余裕をもって必ず守る。遅れは論外</label>
+            <label class="quiz-opt"><input type="radio" name="q2" value="b">基本守るが、状況によって柔軟に調整する</label>
+            <label class="quiz-opt"><input type="radio" name="q2" value="c">完成度を上げるためなら多少ずれても仕方ない</label>
+          </div>
+        </div>
+
+        <div class="quiz-q">
+          <div class="quiz-q-text">Q3. 気になる人がいたとき、あなたは？</div>
+          <div class="quiz-options">
+            <label class="quiz-opt"><input type="radio" name="q3" value="a">すぐ連絡してアポを取る</label>
+            <label class="quiz-opt"><input type="radio" name="q3" value="b">共通の知人に繋いでもらうよう動く</label>
+            <label class="quiz-opt"><input type="radio" name="q3" value="c">まずSNSや記事で相手を調べてから</label>
+          </div>
+        </div>
+
+                <button class="btn" id="analyzeBtn" onclick="analyze()">相性を診断する</button>
+      </div>
+    </aside>
+
+    <main class="results">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-glyph">◈</div>
+        <div class="empty-text">ゲストの情報を入力して<br>相性診断を実行してください</div>
+      </div>
+
+      <div class="guest-card" id="guestCard">
+        <div class="gc-label">GUEST PROFILE</div>
+        <div class="gc-name" id="gcName"></div>
+        <div class="gc-meta" id="gcMeta"></div>
+        <div class="type-pill t1" id="gcType"></div>
+        <div class="gc-analysis" id="gcAnalysis"></div>
+        <div class="axes">
+          <div><div class="ax-name">関心の広さ</div><div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div><div class="ax-val" id="axAv"></div></div>
+          <div><div class="ax-name">革新指数</div><div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div><div class="ax-val" id="axBv"></div></div>
+          <div><div class="ax-name">行動スタイル</div><div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div><div class="ax-val" id="axCv"></div></div>
         </div>
       </div>
-      <div class="axes-row">
-        <div><div class="ax-name">関心の広さ</div><div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div><div class="ax-val" id="axAv"></div></div>
-        <div><div class="ax-name">革新指数</div><div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div><div class="ax-val" id="axBv"></div></div>
-        <div><div class="ax-name">行動スタイル</div><div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div><div class="ax-val" id="axCv"></div></div>
-      </div>
-    </div>
 
-    <!-- 相性TOP7 -->
-    <div class="sec">
-      <div class="sec-hdr">
+      <div class="sec-hdr" id="secHdr">
         <div class="sec-title">相性 TOP 7</div>
-        <div class="sec-pill" id="top7Count"></div>
+        <div class="sec-pill" id="secCount"></div>
       </div>
       <div class="match-grid" id="matchGrid"></div>
-    </div>
-
-    <!-- メンバー一覧 -->
-    <div class="sec">
-      <div class="sec-hdr">
-        <div class="sec-title">メンバー一覧</div>
-        <div class="sec-pill" id="memberCount"></div>
-      </div>
-      <div class="member-list" id="memberList"></div>
-    </div>
+    </main>
   </div>
 </div>
 
 <script>
 // ════════════════════════════════════════════════════════════
-// ▼▼▼  運営者設定エリア  ▼▼▼
-// ════════════════════════════════════════════════════════════
-const CONFIG = {
-  API_URL  : 'https://script.google.com/macros/s/AKfycbzMHyTT6uq8YR1iZPNn6PunpYYYZh4N_bAoQQllEdwtytAlRJeZFdSldCXZ6wfvimlb/exec',
-  PASSWORD : 'glitter2024',   // ← 共通パスワードをここで変更
-};
+// メンバーデータ（スプレッドシートの②スコア計算と同期）
+const API_URL = 'https://script.google.com/macros/s/AKfycbzMHyTT6uq8YR1iZPNn6PunpYYYZh4N_bAoQQllEdwtytAlRJeZFdSldCXZ6wfvimlb/exec';
+
 // ════════════════════════════════════════════════════════════
 // ▲▲▲  運営者設定エリア  ▲▲▲
 // ════════════════════════════════════════════════════════════
 
-// ── 定数 ─────────────────────────────────────────────────────
+
+// ── メンバーデータ ───────────────────────────────────────────
+let MEMBERS = [];
+
+// ── タイプ相性ボーナス ───────────────────────────────────────
 const BONUS = {
   '1_1':15,'1_2':10,'1_3':12,'1_4':3, '1_5':8,
   '2_1':10,'2_2':15,'2_3':10,'2_4':11,'2_5':8,
@@ -226,62 +267,130 @@ const BONUS = {
   '5_1':8, '5_2':8, '5_3':8, '5_4':8, '5_5':10,
 };
 
+// ── タイプ定義 ───────────────────────────────────────────────
+const TYPES = [
+  { id:1, name:'革新推進型' },
+  { id:2, name:'広域探索型' },
+  { id:3, name:'堅実構築型' },
+  { id:4, name:'専門深化型' },
+  { id:5, name:'バランス型' },
+];
+
+// ── 役職キーワードによるタイプ推定 ──────────────────────────
+const ROLE_SIGNALS = [
+  { keywords:['CTO','エンジニア','テック','開発','IT','DX','AI','デジタル'], axisB:+3, flex:+2, typeHint:1 },
+  { keywords:['CEO','代表','社長','創業','スタートアップ','起業'],           axisB:+2, flex:+2, typeHint:1 },
+  { keywords:['マーケ','広告','PR','ブランド','コミュニケーション'],          axisA:+2, axisB:+1, typeHint:2 },
+  { keywords:['事業開発','BD','アライアンス','パートナー','新規'],            axisA:+3, axisB:+1, typeHint:2 },
+  { keywords:['CFO','財務','経理','会計','投資','ファイナンス'],              solid:+3, axisB:-1, typeHint:3 },
+  { keywords:['法務','コンプライアンス','リスク','監査'],                     solid:+3, flex:-2,  typeHint:3 },
+  { keywords:['研究','R&D','専門','シニア','チーフ','スペシャリスト'],        axisA:-2, solid:+1, typeHint:4 },
+  { keywords:['HR','人事','組織','採用','人材','研修'],                       solid:+1, axisA:-1, typeHint:4 },
+  { keywords:['コンサル','戦略','アドバイザー'],                              axisA:+1, axisB:+1, typeHint:5 },
+  { keywords:['営業','セールス','カスタマー','CS'],                           flex:+1,  axisA:+1, typeHint:5 },
+];
+
+// ── 業界キーワード ───────────────────────────────────────────
+const INDUSTRY_SIGNALS = [
+  { keywords:['テック','IT','SaaS','ソフト','アプリ','クラウド','AI'],       axisB:+2, domains:+2 },
+  { keywords:['製造','工業','ものづくり','メーカー'],                         solid:+2, domains:-1 },
+  { keywords:['金融','銀行','保険','証券','投資'],                            solid:+2, axisB:-1  },
+  { keywords:['医療','ヘルス','バイオ','薬'],                                 solid:+1, domains:-1 },
+  { keywords:['教育','学校','研修','スクール'],                               axisA:+1, solid:+1  },
+  { keywords:['クリエイティブ','デザイン','広告','エンタメ','メディア'],      flex:+2,  axisB:+1  },
+  { keywords:['不動産','建設','建築'],                                        solid:+2, axisA:-1  },
+  { keywords:['小売','EC','流通','商社'],                                     axisA:+1, flex:+1   },
+  { keywords:['グローバル','海外','インバウンド','輸出'],                     axisA:+3, domains:+2 },
+  { keywords:['社会','SDGs','NPO','NGO','公共'],                             axisA:+2, axisB:+1  },
+];
+
+// ── 年代による補正 ───────────────────────────────────────────
+const AGE_PARAMS = {
+  '20代': { axisB:+2, flex:+2, solid:-1 },
+  '30代': { axisB:+1, flex:+1 },
+  '40代': { },
+  '50代': { solid:+1, axisB:-1 },
+  '60代以上': { solid:+2, axisB:-2, flex:-1 },
+};
+
+// ── タイプ別説明文テンプレート ──────────────────────────────
 const TYPE_ANALYSIS = {
-  1:['新しいアイデアを即座に実行に移す推進力が強みです。変化を機会と捉え、スピード感をもってビジネスを動かします。'],
-  2:['幅広い領域に関心を持ち、異業種のつながりから新たな価値を生み出すタイプです。多彩なネットワークが強みです。'],
-  3:['実績と信頼を着実に積み上げ、安定した成果を出し続けるタイプです。長期的な関係構築を大切にします。'],
-  4:['特定の専門領域を深く掘り下げ、高い専門性で価値を提供するタイプです。深い知識が信頼を生みます。'],
-  5:['状況に応じて柔軟にスタイルを変えられるバランス型です。幅広い相手と円滑に協働できる適応力があります。'],
+  1: [
+    '新しいアイデアを即座に実行に移す推進力が強みです。変化を機会と捉え、スピード感をもってビジネスを動かします。',
+    '革新的な取り組みを積極的に推進するタイプです。テクノロジーや新手法への感度が高く、実行力があります。',
+  ],
+  2: [
+    '幅広い領域に関心を持ち、異業種のつながりから新たな価値を生み出すタイプです。多彩なネットワークが強みです。',
+    '横断的な視野でビジネスを捉え、さまざまな領域をつなぐ役割を担います。新しい出会いから化学反応を生みます。',
+  ],
+  3: [
+    '実績と信頼を着実に積み上げ、安定した成果を出し続けるタイプです。長期的な関係構築を大切にします。',
+    'データと根拠をもとに判断し、リスクを丁寧に管理しながら進めます。信頼感と継続性が最大の強みです。',
+  ],
+  4: [
+    '特定の専門領域を深く掘り下げ、高い専門性で価値を提供するタイプです。深い知識が周囲からの信頼を生みます。',
+    '一つの分野を徹底的に極める姿勢が特徴です。専門的な課題解決で周囲から頼りにされる存在です。',
+  ],
+  5: [
+    '状況に応じて柔軟にスタイルを変えられるバランス型です。幅広い相手と円滑に協働できる適応力があります。',
+    '特定の軸に偏らず、状況に応じた最適解を導くタイプです。調整役として組織やプロジェクトを安定させます。',
+  ],
 };
 
+// ── 相性コメントテンプレート（ゲストタイプ × メンバータイプ × スコア帯）
 const COMPAT_COMMENTS = {
-  '1_1':['同じ革新推進タイプ。スピードと熱量が共鳴し、アイデアが次々と形になります。','方向性が近く、実行フェーズで力を合わせやすい組み合わせです。','スタイルは似ているが、アプローチの違いを調整するとよいでしょう。'],
-  '1_2':['行動力と人脈が融合。新市場を一緒に開拓できる理想的なパートナーです。','広い視野と推進力が補い合い、プロジェクト全体を動かせます。','役割分担を明確にすると、お互いの強みを活かせます。'],
-  '1_3':['スピードと安定が絶妙に補完。堅固な基盤の上に革新を重ねられます。','リスクを抑えながら前進できるバランスのよい関係です。','意思決定のペース差を意識すると、よりスムーズに連携できます。'],
-  '1_4':['実行力と深い専門知識の掛け合わせ。アイデアを確実な成果に変えます。','専門家の視点で推進力を補強できます。','価値観の違いを理解し合うことで、補完関係が生まれます。'],
-  '1_5':['推進力を安定的にサポートしてもらえる頼れる関係です。','柔軟な連携でプロジェクトを前進させられます。','役割を明確にすると力を発揮しやすいでしょう。'],
-  '2_1':['推進力と広いネットワークが合わさり、大きなうねりを作れるコンビです。','情報収集力と実行力の組み合わせが機能します。','互いの得意を活かした役割分担がカギです。'],
-  '2_2':['広域探索型どうし。情報共有と連携が活発になり、シナジーが生まれやすいです。','関心領域の重なりで、共同プロジェクトが進めやすい関係です。','方向性をそろえると、より効果的に動けます。'],
-  '2_3':['広い視野と堅実な実行力が融合。可能性を確実な形にします。','探索と実装が役割分担でき、バランスのよいチームになります。','ペースの違いを尊重しながら進めるとよいでしょう。'],
-  '2_4':['広さと深さが補完し合う関係。多様な知見が集結し、質の高い成果を生みます。','異なる専門性が掛け合わさり、独自の価値を提供できます。','互いの視点の違いを強みとして活かしましょう。'],
-  '2_5':['幅広いネットワークと調整力が合わさり、多様な場面で活躍できます。','互いの強みを柔軟に組み合わせられる関係です。','役割を意識すると、連携がより効果的になります。'],
-  '3_1':['堅固な基盤の上で革新を推進できる、理想的な補完関係です。','安定と推進のバランスで、持続的な成長が期待できます。','スタイルの違いを理解し合うことが出発点です。'],
-  '3_2':['実績と広いネットワークが融合。信頼と可能性を両立できます。','堅実さと多様なつながりが組み合わさります。','互いのアプローチを尊重しながら進めましょう。'],
-  '3_3':['同じ堅実構築型。信頼と継続性を軸に、長期的に強固な関係を築けます。','共通の価値観で、安定したコラボレーションが期待できます。','ペースを合わせながら一歩一歩進む関係です。'],
-  '3_4':['確実性と専門性の組み合わせ。深みのある価値を着実に届けられます。','堅実さと専門知識が合わさり、信頼感のある仕事ができます。','共通の目標を設定すると、力を合わせやすいでしょう。'],
-  '3_5':['安定感と適応力が組み合わさり、様々な局面を乗り越えられます。','互いの強みを引き出し合える関係です。','丁寧にコミュニケーションを重ねることが大切です。'],
-  '4_1':['専門知識が革新の推進力を支える関係です。','専門性と行動力の掛け合わせで、独自の価値を生み出せます。','アプローチの違いを超えて、補完関係を築ける可能性があります。'],
-  '4_2':['深い専門性と広いネットワークが融合。唯一無二の価値提供ができます。','専門知識と多様なつながりが組み合わさります。','互いの視点の違いが新しい発見につながります。'],
-  '4_3':['専門性と堅実性が共鳴。深みと信頼を兼ね備えた仕事ができます。','同じ価値観のもと、着実に成果を積み上げられます。','共通の目標に向けて着実に歩める関係です。'],
-  '4_4':['同じ専門深化型。深い領域での対話が弾み、互いを高め合えます。','専門性の交差で、新しい知見が生まれやすい関係です。','互いの専門分野を尊重し合える関係です。'],
-  '4_5':['専門知識と柔軟な適応力が組み合わさります。','多様な場面での活躍が期待できます。','互いの強みを活かす場面を見つけましょう。'],
-  '5_1':['推進力を柔軟にサポートできる安定した関係です。','バランスよく連携しながら前進できます。','役割を明確にすると力を発揮しやすいでしょう。'],
-  '5_2':['幅広い視野に柔軟に対応できる関係です。','多様な局面で連携できます。','互いの強みを活かす方法を探しましょう。'],
-  '5_3':['安定感どうしで、信頼に基づいた関係が築けます。','堅実に物事を進められる関係です。','丁寧なコミュニケーションが関係を深めます。'],
-  '5_4':['専門性をサポートし合える関係です。','互いの強みを補い合えます。','共通の課題を見つけると連携しやすくなります。'],
-  '5_5':['バランス型どうし。様々な状況に柔軟に対応し合える関係です。','互いの適応力を活かした連携ができます。','明確な役割分担を決めると、より効果的に動けます。'],
+  // [gTypeId][mTypeId] → [高(80+), 中(55-79), 低(<55)]
+  '1_1': ['同じ革新推進タイプ。スピードと熱量が共鳴し、アイデアが次々と形になる関係です。', '方向性が近く、実行フェーズで力を合わせやすい組み合わせです。', 'スタイルは似ているが、アプローチの違いを調整するとよいでしょう。'],
+  '1_2': ['行動力と人脈が融合。新市場や新事業を一緒に開拓できる理想的なパートナーです。', '広い視野と推進力が補い合い、プロジェクト全体を動かせます。', '役割分担を明確にすると、お互いの強みを活かせます。'],
+  '1_3': ['スピードと安定が絶妙に補完。堅固な基盤の上に革新を重ねられる黄金コンビです。', 'スピードと慎重さがバランスし、リスクを抑えながら前進できます。', '意思決定のペース差を意識すると、よりスムーズに連携できます。'],
+  '1_4': ['実行力と深い専門知識の掛け合わせ。アイデアを確実な成果に変える力があります。', '専門家の視点で推進力を補強できます。', '価値観の違いを理解し合うことで、補完関係が生まれます。'],
+  '1_5': ['推進力を安定的にサポートしてもらえる頼れる関係です。', '柔軟な連携でプロジェクトを前進させられます。', '役割を明確にすると力を発揮しやすいでしょう。'],
+  '2_1': ['推進力と広いネットワークが合わさり、大きなうねりを作れるコンビです。', '情報収集力と実行力の組み合わせが機能します。', '互いの得意を活かした役割分担がカギです。'],
+  '2_2': ['広域探索型どうし。情報共有と連携が活発になり、シナジーが生まれやすいです。', '関心領域の重なりで、共同プロジェクトが進めやすい関係です。', '方向性をそろえると、より効果的に動けます。'],
+  '2_3': ['広い視野と堅実な実行力が融合。可能性を確実な形にする強力な組み合わせです。', '探索と実装が役割分担でき、バランスのよいチームになります。', 'ペースの違いを尊重しながら進めるとよいでしょう。'],
+  '2_4': ['広さと深さが補完し合う関係。多様な知見が集結し、質の高い成果を生みます。', '異なる専門性が掛け合わさり、独自の価値を提供できます。', '互いの視点の違いを強みとして活かしましょう。'],
+  '2_5': ['幅広いネットワークと調整力が合わさり、多様な場面で活躍できます。', '互いの強みを柔軟に組み合わせられる関係です。', '役割を意識すると、連携がより効果的になります。'],
+  '3_1': ['堅固な基盤の上で革新を推進できる、理想的な補完関係です。', '安定と推進のバランスで、持続的な成長が期待できます。', 'スタイルの違いを理解し合うことが出発点です。'],
+  '3_2': ['実績と広いネットワークが融合。信頼と可能性を両立できます。', '堅実さと多様なつながりが組み合わさります。', '互いのアプローチを尊重しながら進めましょう。'],
+  '3_3': ['同じ堅実構築型。信頼と継続性を軸に、長期的に強固な関係を築けます。', '共通の価値観で、安定したコラボレーションが期待できます。', 'ペースを合わせながら一歩一歩進む関係です。'],
+  '3_4': ['確実性と専門性の組み合わせ。深みのある価値を着実に届けられます。', '堅実さと専門知識が合わさり、信頼感のある仕事ができます。', '共通の目標を設定すると、力を合わせやすいでしょう。'],
+  '3_5': ['安定感と適応力が組み合わさり、様々な局面を乗り越えられます。', '互いの強みを引き出し合える関係です。', '丁寧にコミュニケーションを重ねることが大切です。'],
+  '4_1': ['専門知識が革新の推進力を支える関係。深みのある実行が可能です。', '専門性と行動力の掛け合わせで、独自の価値を生み出せます。', 'アプローチの違いを超えて、補完関係を築ける可能性があります。'],
+  '4_2': ['深い専門性と広いネットワークが融合。唯一無二の価値提供ができます。', '専門知識と多様なつながりが組み合わさります。', '互いの視点の違いが新しい発見につながります。'],
+  '4_3': ['専門性と堅実性が共鳴。深みと信頼を兼ね備えた仕事ができます。', '同じ価値観のもと、着実に成果を積み上げられます。', '共通の目標に向けて着実に歩める関係です。'],
+  '4_4': ['同じ専門深化型。深い領域での対話が弾み、互いを高め合えます。', '専門性の交差で、新しい知見が生まれやすい関係です。', '互いの専門分野を尊重し合える関係です。'],
+  '4_5': ['専門知識と柔軟な適応力が組み合わさります。', '多様な場面での活躍が期待できます。', '互いの強みを活かす場面を見つけましょう。'],
+  '5_1': ['推進力を柔軟にサポートできる安定した関係です。', 'バランスよく連携しながら前進できます。', '役割を明確にすると力を発揮しやすいでしょう。'],
+  '5_2': ['幅広い視野に柔軟に対応できる関係です。', '多様な局面で連携できます。', '互いの強みを活かす方法を探しましょう。'],
+  '5_3': ['安定感どうしで、信頼に基づいた関係が築けます。', '堅実に物事を進められる関係です。', '丁寧なコミュニケーションが関係を深めます。'],
+  '5_4': ['専門性をサポートし合える関係です。', '互いの強みを補い合えます。', '共通の課題を見つけると連携しやすくなります。'],
+  '5_5': ['バランス型どうし。様々な状況に柔軟に対応し合える関係です。', '互いの適応力を活かした連携ができます。', '明確な役割分担を決めると、より効果的に動けます。'],
 };
 
-// ── 状態 ─────────────────────────────────────────────────────
-let MEMBERS = [];
-let currentMember = null;
-let radarChart = null;
+// ── クイズ選択ハイライト ─────────────────────────────────────
+document.addEventListener('change', e => {
+  if (e.target.type === 'radio') {
+    const name = e.target.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.closest('.quiz-opt').classList.toggle('selected', r.checked);
+    });
+  }
+});
 
-// ── 起動：メンバー読込 ────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', loadMembers);
+// ── 起動時にメンバー自動読込 ─────────────────────────────────
+window.addEventListener('DOMContentLoaded', initMembers);
 
-function loadMembers() {
-  const cbName = 'glitterCb_' + Date.now();
+function initMembers() {
+  // JSONP で読み込む（CORSを回避）
+  const callbackName = 'glitterCallback_' + Date.now();
   const timeout = setTimeout(() => {
-    delete window[cbName];
-    console.warn('メンバー読込タイムアウト');
-  }, 12000);
+    showMemberError('タイムアウト：Apps Scriptに接続できませんでした');
+    delete window[callbackName];
+  }, 10000);
 
-  window[cbName] = function(data) {
+  window[callbackName] = function(data) {
     clearTimeout(timeout);
-    delete window[cbName];
-    const s = document.getElementById('jsonp-s');
-    if (s) s.remove();
+    delete window[callbackName];
     MEMBERS = (data.members || []).map(m => ({
       ...m,
       axisA  : Number(m.axisA)   || 0,
@@ -291,197 +400,216 @@ function loadMembers() {
       typeId : Number(m.typeId)  || 5,
       domains: Number(m.domains) || 6,
     }));
-    // 名前セレクトを生成
-    const sel = document.getElementById('loginName');
-    MEMBERS.forEach(m => {
-      const opt = document.createElement('option');
-      opt.value = m.name;
-      opt.textContent = m.name;
-      sel.appendChild(opt);
-    });
+    const el = document.getElementById('memberNum');
+    el.textContent = MEMBERS.length;
+    el.classList.remove('mc-pulse');
+    // scriptタグを削除
+    const s = document.getElementById('jsonp-script');
+    if (s) s.remove();
   };
 
   const script = document.createElement('script');
-  script.id  = 'jsonp-s';
-  script.src = CONFIG.API_URL + '?callback=' + cbName;
+  script.id  = 'jsonp-script';
+  script.src = API_URL + '?callback=' + callbackName;
+  script.onerror = () => {
+    clearTimeout(timeout);
+    delete window[callbackName];
+    showMemberError('スクリプト読み込みエラー');
+  };
   document.head.appendChild(script);
 }
 
-// ── ログイン ──────────────────────────────────────────────────
-function doLogin() {
-  const name = document.getElementById('loginName').value;
-  const pw   = document.getElementById('loginPw').value;
-  const err  = document.getElementById('loginErr');
-
-  if (!name) { err.textContent = '名前を選択してください'; return; }
-  if (pw !== CONFIG.PASSWORD) { err.textContent = 'パスワードが違います'; return; }
-
-  const member = MEMBERS.find(m => m.name === name);
-  if (!member) { err.textContent = 'メンバーデータが読み込まれていません。しばらくお待ちください。'; return; }
-
-  err.textContent = '';
-  currentMember = member;
-  showApp();
+function showMemberError(msg) {
+  const el = document.getElementById('memberNum');
+  el.textContent = '!';
+  el.classList.remove('mc-pulse');
+  el.style.color = 'var(--coral)';
+  document.getElementById('initErrorMsg').textContent = msg;
+  document.getElementById('initError').style.display = 'block';
 }
 
-function logout() {
-  currentMember = null;
-  document.getElementById('app').classList.remove('show');
-  document.getElementById('loginWrap').style.display = 'flex';
-  document.getElementById('loginPw').value = '';
-  document.getElementById('loginName').value = '';
-  if (radarChart) { radarChart.destroy(); radarChart = null; }
-}
 
-// ── アプリ表示 ────────────────────────────────────────────────
-function showApp() {
-  document.getElementById('loginWrap').style.display = 'none';
-  document.getElementById('app').classList.add('show');
+function nv(v){ return isNaN(Number(v))?0:Number(v); }
 
-  const m = currentMember;
-  document.getElementById('headerName').textContent = m.name;
-  document.getElementById('pcName').textContent = m.name;
-  document.getElementById('pcMeta').textContent = [m.role, m.company, m.industry, m.age].filter(Boolean).join(' · ');
+// ── ゲスト情報からスコアをルールベース推定 ────────────────────
+function estimateGuest(name, company, industry, role, age, q1, q2, q3) {
+  // 基準値
+  let axisA=10, axisB=9, flex=5, solid=5, domains=5;
 
-  const tb = document.getElementById('pcType');
-  tb.textContent = m.typeName;
-  tb.className = 'type-pill t' + m.typeId;
-
-  const analyses = TYPE_ANALYSIS[m.typeId] || TYPE_ANALYSIS[5];
-  document.getElementById('pcAnalysis').textContent = analyses[0];
-
-  // 軸バー
-  setTimeout(() => {
-    document.getElementById('axA').style.width  = (m.axisA / 20 * 100) + '%';
-    document.getElementById('axB').style.width  = ((m.axisB - 3) / 12 * 100) + '%';
-    document.getElementById('axC').style.width  = (m.flex / 11 * 100) + '%';
-    document.getElementById('axAv').textContent = m.axisA + ' / 20';
-    document.getElementById('axBv').textContent = m.axisB + ' / 15';
-    document.getElementById('axCv').textContent = m.flex  + ' / 11';
-  }, 60);
-
-  // レーダーチャート
-  drawRadar(m);
-
-  // TOP7
-  const others = MEMBERS.filter(x => x.name !== m.name);
-  const scored = others.map(x => ({ ...x, score: calcScore(m, x) }))
-    .sort((a, b) => b.score - a.score).slice(0, 7);
-  renderTop7(scored, m);
-
-  // メンバー一覧
-  renderMemberList();
-}
-
-// ── レーダーチャート ──────────────────────────────────────────
-function drawRadar(m) {
-  if (radarChart) radarChart.destroy();
-  const ctx = document.getElementById('radarChart').getContext('2d');
-  radarChart = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: ['関心の広さ', '革新指数', '行動速度', 'リスク許容', 'テック'],
-      datasets: [{
-        data: [
-          Math.round(m.axisA / 20 * 10),
-          Math.round((m.axisB - 3) / 12 * 10),
-          Math.round(m.flex / 11 * 10),
-          Math.round(m.flex / 11 * 10),
-          Math.round(m.axisB / 15 * 10),
-        ],
-        fill: true,
-        backgroundColor: 'rgba(80,70,200,0.18)',
-        borderColor: '#7b72e0',
-        borderWidth: 2,
-        pointBackgroundColor: '#7b72e0',
-        pointRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        r: {
-          min: 0, max: 10,
-          ticks: { display: false },
-          grid: { color: 'rgba(255,255,255,0.12)' },
-          pointLabels: { font: { size: 10, family: 'DM Sans' }, color: 'rgba(255,255,255,0.45)' },
-          angleLines: { color: 'rgba(255,255,255,0.1)' },
-        }
-      },
-      plugins: { legend: { display: false } }
+  // 役職シグナル
+  const roleStr = (role+' '+company).toLowerCase();
+  for (const sig of ROLE_SIGNALS) {
+    if (sig.keywords.some(k => roleStr.includes(k.toLowerCase()))) {
+      if (sig.axisA) axisA += sig.axisA;
+      if (sig.axisB) axisB += sig.axisB;
+      if (sig.flex)  flex  += sig.flex;
+      if (sig.solid) solid += sig.solid;
     }
-  });
+  }
+
+  // 業界シグナル
+  const indStr = (industry).toLowerCase();
+  for (const sig of INDUSTRY_SIGNALS) {
+    if (sig.keywords.some(k => indStr.includes(k.toLowerCase()))) {
+      if (sig.axisA)   axisA   += sig.axisA;
+      if (sig.axisB)   axisB   += sig.axisB;
+      if (sig.flex)    flex    += sig.flex;
+      if (sig.solid)   solid   += sig.solid;
+      if (sig.domains) domains += sig.domains;
+    }
+  }
+
+  // 年代補正
+  const ageAdj = AGE_PARAMS[age] || {};
+  if (ageAdj.axisB)  axisB  += ageAdj.axisB;
+  if (ageAdj.flex)   flex   += ageAdj.flex;
+  if (ageAdj.solid)  solid  += ageAdj.solid;
+
+  // Q1: 行動スタイル（即断 vs 慎重 vs 合意）
+  // a=まず動く → flex↑ axisB↑（革新推進寄り）
+  // b=情報収集 → solid↑ flex↓（堅実寄り）
+  // c=相談合意 → axisA↑ domains↑（広域探索寄り）
+  if (q1 === 'a') { flex += 2; axisB += 1; }
+  else if (q1 === 'b') { solid += 2; flex -= 1; }
+  else if (q1 === 'c') { axisA += 2; domains += 1; }
+
+  // Q2: 真面目さ・規律感（締め切り姿勢）
+  // a=必ず守る → solid↑↑（堅実構築型強化）
+  // b=柔軟調整 → そのまま（バランス型補強）
+  // c=完成度優先 → axisB↑ flex↑（革新・クリエイティブ寄り）
+  if (q2 === 'a') { solid += 3; flex -= 1; }
+  else if (q2 === 'b') { /* 中間 */ }
+  else if (q2 === 'c') { axisB += 1; flex += 1; solid -= 1; }
+
+  // Q3: 行動力・人脈スタイル
+  // a=即アポ → flex↑ axisB↑（推進力強）
+  // b=紹介経由 → axisA↑ domains↑（広域探索型）
+  // c=事前調査 → solid↑（慎重・専門深化寄り）
+  if (q3 === 'a') { flex += 2; axisB += 1; }
+  else if (q3 === 'b') { axisA += 2; domains += 1; }
+  else if (q3 === 'c') { solid += 1; axisA -= 1; }
+
+  // クランプ
+  axisA   = Math.max(0,  Math.min(20, axisA));
+  axisB   = Math.max(3,  Math.min(15, axisB));
+  flex    = Math.max(0,  Math.min(11, flex));
+  solid   = Math.max(0,  Math.min(11, solid));
+  domains = Math.max(1,  Math.min(12, domains));
+
+  // タイプ判定
+  let typeId = 5;
+  if      (axisB >= 11 && flex >= 7)  typeId = 1;
+  else if (axisA >= 14)               typeId = 2;
+  else if (solid >= 7 && axisB <= 8)  typeId = 3;
+  else if (axisA <= 7)                typeId = 4;
+
+  const typeName = TYPES.find(t=>t.id===typeId)?.name || 'バランス型';
+  const analyses = TYPE_ANALYSIS[typeId];
+  const analysis = analyses[Math.floor(Math.random()*analyses.length)];
+
+  return { name, company, industry, role, age, axisA, axisB, flex, solid, domains, typeId, typeName, analysis };
 }
 
-// ── 相性スコア計算 ────────────────────────────────────────────
-function calcScore(a, b) {
-  const sA    = Math.round((1 - Math.abs(a.axisA - b.axisA) / 20) * 20);
-  const sB    = Math.round((1 - Math.abs(a.axisB - b.axisB) / 12) * 20);
-  const sC    = Math.round((Math.abs(a.flex - b.solid) + Math.abs(b.flex - a.solid)) / 20 * 25);
-  const maxD  = Math.max(a.domains, b.domains, 1);
-  const sD    = Math.round(Math.min(a.domains, b.domains) / maxD * 20);
-  const bonus = BONUS[`${a.typeId}_${b.typeId}`] ?? 8;
+// ── 相性スコア計算 ───────────────────────────────────────────
+function calcScore(g, m) {
+  const sA    = Math.round((1 - Math.abs(g.axisA - m.axisA) / 20) * 20);
+  const sB    = Math.round((1 - Math.abs(g.axisB - m.axisB) / 12) * 20);
+  const sC    = Math.round((Math.abs(g.flex - m.solid) + Math.abs(m.flex - g.solid)) / 20 * 25);
+  const maxD  = Math.max(g.domains, m.domains, 1);
+  const sD    = Math.round(Math.min(g.domains, m.domains) / maxD * 20);
+  const bonus = BONUS[`${g.typeId}_${m.typeId}`] ?? 8;
   return Math.min(100, sA + sB + sC + sD + bonus);
 }
 
-function getComment(aId, bId, score) {
-  const arr = COMPAT_COMMENTS[`${aId}_${bId}`] || ['ビジネスの接点を見つけ、新しい関係を築けます。','様々な場面でのコラボレーションが期待されます。','互いの強みを活かせる場面を探しましょう。'];
-  return arr[score >= 80 ? 0 : score >= 55 ? 1 : 2];
+// ── 相性コメント取得 ─────────────────────────────────────────
+function getComment(gTypeId, mTypeId, score) {
+  const key = `${gTypeId}_${mTypeId}`;
+  const arr = COMPAT_COMMENTS[key] || ['ビジネスの接点を見つけ、新しい関係を築けます。', '様々な場面でのコラボレーションが期待されます。', '互いの強みを活かせる場面を探しましょう。'];
+  const idx = score >= 80 ? 0 : score >= 55 ? 1 : 2;
+  return arr[idx];
 }
 
-// ── TOP7 レンダリング ─────────────────────────────────────────
-function renderTop7(scored, me) {
-  document.getElementById('top7Count').textContent = scored.length + ' 名';
+// ── 診断実行 ─────────────────────────────────────────────────
+function analyze() {
+  const name     = document.getElementById('fName').value.trim();
+  const company  = document.getElementById('fCompany').value.trim();
+  const industry = document.getElementById('fIndustry').value.trim();
+  const role     = document.getElementById('fRole').value.trim();
+  const age      = document.getElementById('fAge').value;
+  const q1       = document.querySelector('input[name="q1"]:checked')?.value || '';
+  const q2       = document.querySelector('input[name="q2"]:checked')?.value || '';
+  const q3       = document.querySelector('input[name="q3"]:checked')?.value || '';
+
+  if (!name)           { alert('氏名を入力してください'); return; }
+  if (!MEMBERS.length) { alert('メンバーデータを読み込み中です。しばらくお待ちください。'); return; }
+
+  document.getElementById('emptyState').style.display = 'none';
+
+  // ゲスト推定（即時）
+  const guest = estimateGuest(name, company, industry, role, age, q1, q2, q3);
+
+  // 相性スコア計算 → TOP7
+  const scored = MEMBERS
+    .map(m => ({ ...m, score: calcScore(guest, m) }))
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 7);
+
+  // 相性コメント
+  const reasons = scored.map(m => getComment(guest.typeId, m.typeId, m.score));
+
+  renderGuest(guest);
+  renderMatches(scored, reasons);
+}
+
+// ── 描画 ──────────────────────────────────────────────────────
+function renderGuest(g) {
+  document.getElementById('gcName').textContent = g.name;
+  document.getElementById('gcMeta').textContent = [g.role,g.company,g.industry,g.age].filter(Boolean).join(' · ');
+  const tb = document.getElementById('gcType');
+  tb.textContent = g.typeName; tb.className = 'type-pill t'+g.typeId;
+  document.getElementById('gcAnalysis').textContent = g.analysis;
+  setTimeout(()=>{
+    document.getElementById('axA').style.width  = (g.axisA/20*100)+'%';
+    document.getElementById('axB').style.width  = ((g.axisB-3)/12*100)+'%';
+    document.getElementById('axC').style.width  = (g.flex/11*100)+'%';
+    document.getElementById('axAv').textContent = g.axisA+' / 20';
+    document.getElementById('axBv').textContent = g.axisB+' / 15';
+    document.getElementById('axCv').textContent = g.flex +' / 11';
+  }, 60);
+  document.getElementById('guestCard').classList.add('show');
+}
+
+function renderMatches(members, reasons) {
   const grid = document.getElementById('matchGrid');
   grid.innerHTML = '';
+  document.getElementById('secHdr').classList.add('show');
+  document.getElementById('secCount').textContent = members.length+' 名';
 
-  scored.forEach((m, i) => {
-    const rank   = i + 1;
-    const compat = m.score >= 80 ? '◎ 共鳴型' : m.score >= 55 ? '◯ 補完型' : '△ 要調整';
-    const ctCls  = m.score >= 80 ? 'ct-k' : m.score >= 55 ? 'ct-h' : 'ct-o';
+  members.forEach((m,i) => {
+    const rank  = i+1;
+    const compat = m.score>=80?'◎ 共鳴型':m.score>=55?'◯ 補完型':'△ 要調整';
+    const ctCls  = m.score>=80?'ct-k':m.score>=55?'ct-h':'ct-o';
     const rbCls  = rank===1?'rb-1':rank===2?'rb-2':rank===3?'rb-3':'rb-n';
-    const comment = getComment(me.typeId, m.typeId, m.score);
-
     const card = document.createElement('div');
     card.className = 'mc';
-    card.style.animationDelay = (i * 0.05) + 's';
     card.innerHTML = `
       <div class="mc-top">
         <div class="rank-badge ${rbCls}">${rank}</div>
         <div class="compat-tag ${ctCls}">${compat}</div>
       </div>
       <div class="mc-name">${m.name}</div>
-      <div class="mc-sub">${[m.role, m.typeName].filter(Boolean).join(' · ')}</div>
+      <div class="mc-sub">${m.role} · ${m.typeName}</div>
       <div class="score-row">
         <div class="score-val">${m.score}</div>
-        <div class="score-track"><div class="score-fill" style="width:0%" data-w="${m.score}"></div></div>
+        <div class="score-track"><div class="score-fill" style="width:0%"></div></div>
       </div>
-      <div class="mc-reason">${comment}</div>
+      <div class="mc-reason">${reasons[i]||'—'}</div>
     `;
     grid.appendChild(card);
-    setTimeout(() => {
-      card.querySelector('.score-fill').style.width = m.score + '%';
-    }, 100 + i * 60);
-  });
-}
-
-// ── メンバー一覧 レンダリング ─────────────────────────────────
-function renderMemberList() {
-  document.getElementById('memberCount').textContent = MEMBERS.length + ' 名';
-  const list = document.getElementById('memberList');
-  list.innerHTML = '';
-
-  MEMBERS.forEach(m => {
-    const card = document.createElement('div');
-    card.className = 'ml-card';
-    const typeClass = 'mt-' + (m.typeId || 5);
-    card.innerHTML = `
-      <div class="ml-name">${m.name}</div>
-      <div class="ml-role">${m.role || '—'}</div>
-      <span class="ml-type ${typeClass}">${m.typeName || 'バランス型'}</span>
-    `;
-    list.appendChild(card);
+    setTimeout(()=>{
+      card.classList.add('show');
+      card.querySelector('.score-fill').style.width = m.score+'%';
+    }, 80+i*65);
   });
 }
 </script>
