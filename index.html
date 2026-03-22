@@ -229,11 +229,27 @@ header{display:flex;align-items:flex-end;justify-content:space-between;padding:4
         <div class="gc-meta" id="gcMeta"></div>
         <div class="type-pill t1" id="gcType"></div>
         <div class="gc-analysis" id="gcAnalysis"></div>
-        <div class="axes">
-          <div><div class="ax-name">関心の広さ</div><div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div><div class="ax-val" id="axAv"></div></div>
-          <div><div class="ax-name">革新指数</div><div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div><div class="ax-val" id="axBv"></div></div>
-          <div><div class="ax-name">行動スタイル</div><div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div><div class="ax-val" id="axCv"></div></div>
-          <div><div class="ax-name">AI活用度</div><div class="ax-track"><div class="ax-fill" id="axD" style="width:0%"></div></div><div class="ax-val" id="axDv"></div></div>
+        <div class="axes" id="axesRow">
+          <div class="ax-item">
+            <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axALabel">—</span></div>
+            <div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div>
+            <div class="ax-sub" id="axADim">関心の幅</div>
+          </div>
+          <div class="ax-item">
+            <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axBLabel">—</span></div>
+            <div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div>
+            <div class="ax-sub" id="axBDim">変化への姿勢</div>
+          </div>
+          <div class="ax-item">
+            <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axCLabel">—</span></div>
+            <div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div>
+            <div class="ax-sub" id="axCDim">行動スタイル</div>
+          </div>
+          <div class="ax-item">
+            <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axDLabel">—</span></div>
+            <div class="ax-track"><div class="ax-fill" id="axD" style="width:0%"></div></div>
+            <div class="ax-sub" id="axDDim">テック活用</div>
+          </div>
         </div>
       </div>
 
@@ -554,6 +570,74 @@ function estimateGuest(name, company, industry, role, age, q1, q2, q3) {
   return { name, company, industry, role, age,
            axisA, axisB, flex, solid, aiUse, domains,
            typeId, typeName, analysis };
+}
+
+// ════════════════════════════════════════════════════════════
+// 軸定義：各軸の「低い側の強み」と「高い側の強み」
+// スコアが低くても「違う個性の強み」として肯定的に表示する
+// ════════════════════════════════════════════════════════════
+const AXIS_DEFS = [
+  {
+    id: 'A', dim: '関心の幅',
+    // ratio: axisA/20 (0.0〜1.0)
+    lo: { label:'専門集中型', cls:'ax-badge-lo', fill:'ax-fill-lo', threshold: 0.45 },
+    hi: { label:'マルチ探索型', cls:'ax-badge-hi', fill:'ax-fill-hi', threshold: 0.65 },
+    mid:{ label:'バランス型', cls:'ax-badge-mid', fill:'ax-fill-mid' },
+    // 低い側は「専門集中度」として右から左に埋まるように見せる
+    // ratio をそのまま使わず「強みの大きさ」に変換
+    toStrength: (v) => v <= 0.45 ? (1 - v)   // 低い → 専門度の高さとして表示
+                     : v >= 0.65 ? v           // 高い → 広さとして表示
+                     :             0.5,        // 中間 → 50%
+  },
+  {
+    id: 'B', dim: '変化への姿勢',
+    lo: { label:'王道実績派', cls:'ax-badge-lo', fill:'ax-fill-lo', threshold: 0.40 },
+    hi: { label:'革新先行派', cls:'ax-badge-hi', fill:'ax-fill-hi', threshold: 0.60 },
+    mid:{ label:'実績×革新', cls:'ax-badge-mid', fill:'ax-fill-mid' },
+    toStrength: (v) => v <= 0.40 ? (1 - v) : v >= 0.60 ? v : 0.5,
+  },
+  {
+    id: 'C', dim: '行動スタイル',
+    lo: { label:'熟慮戦略型', cls:'ax-badge-lo', fill:'ax-fill-lo', threshold: 0.40 },
+    hi: { label:'即断行動型', cls:'ax-badge-hi', fill:'ax-fill-hi', threshold: 0.60 },
+    mid:{ label:'状況判断型', cls:'ax-badge-mid', fill:'ax-fill-mid' },
+    toStrength: (v) => v <= 0.40 ? (1 - v) : v >= 0.60 ? v : 0.5,
+  },
+  {
+    id: 'D', dim: 'テック活用',
+    lo: { label:'人間力重視', cls:'ax-badge-lo', fill:'ax-fill-lo', threshold: 0.35 },
+    hi: { label:'テック先端派', cls:'ax-badge-hi', fill:'ax-fill-hi', threshold: 0.65 },
+    mid:{ label:'バランス活用', cls:'ax-badge-mid', fill:'ax-fill-mid' },
+    toStrength: (v) => v <= 0.35 ? (1 - v) : v >= 0.65 ? v : 0.5,
+  },
+];
+
+function renderAxes(g) {
+  const ratios = [
+    g.axisA / 20,
+    (g.axisB - 3) / 12,
+    g.flex / 11,
+    (g.aiUse - 1) / 4,
+  ];
+
+  AXIS_DEFS.forEach((def, i) => {
+    const ratio    = Math.max(0, Math.min(1, ratios[i]));
+    const strength = def.toStrength(ratio);
+
+    // ラベル判定
+    let chosen;
+    if      (ratio <= def.lo.threshold) chosen = def.lo;
+    else if (ratio >= def.hi.threshold) chosen = def.hi;
+    else                                chosen = def.mid;
+
+    const labelEl = document.getElementById('ax' + def.id + 'Label');
+    labelEl.textContent = chosen.label;
+    labelEl.className   = 'ax-badge ' + chosen.cls;
+
+    const fillEl = document.getElementById('ax' + def.id);
+    fillEl.className   = 'ax-fill ' + chosen.fill;
+    fillEl.style.width = Math.round(strength * 100) + '%';
+  });
 }
 
 // ════════════════════════════════════════════════════════════
