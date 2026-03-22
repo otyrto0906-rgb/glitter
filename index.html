@@ -139,6 +139,12 @@ header{display:flex;align-items:flex-end;justify-content:space-between;padding:4
 <body>
 <div class="shell">
 
+  <!-- ナビゲーション -->
+<nav style="display:flex;align-items:center;justify-content:flex-end;padding:12px 0 0;gap:8px">
+  <a href="index.html" style="font-family:'DM Mono',monospace;font-size:11px;padding:6px 14px;border-radius:20px;text-decoration:none;background:var(--ink);color:var(--paper);letter-spacing:.08em">ゲスト診断</a>
+
+</nav>
+
 <header>
     <div>
       <div class="logo">glitt<em>e</em>r</div>
@@ -227,6 +233,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;padding:4
           <div><div class="ax-name">関心の広さ</div><div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div><div class="ax-val" id="axAv"></div></div>
           <div><div class="ax-name">革新指数</div><div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div><div class="ax-val" id="axBv"></div></div>
           <div><div class="ax-name">行動スタイル</div><div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div><div class="ax-val" id="axCv"></div></div>
+          <div><div class="ax-name">AI活用度</div><div class="ax-track"><div class="ax-fill" id="axD" style="width:0%"></div></div><div class="ax-val" id="axDv"></div></div>
         </div>
       </div>
 
@@ -270,42 +277,61 @@ const TYPES = [
   { id:5, name:'バランス型' },
 ];
 
-// ── 役職キーワードによるタイプ推定 ──────────────────────────
+// ── 役職キーワードシグナル（axisA/B/flex/solid/aiUse/domains）──
 const ROLE_SIGNALS = [
-  { keywords:['CTO','エンジニア','テック','開発','IT','DX','AI','デジタル'], axisB:+3, flex:+2, typeHint:1 },
-  { keywords:['CEO','代表','社長','創業','スタートアップ','起業'],           axisB:+2, flex:+2, typeHint:1 },
-  { keywords:['マーケ','広告','PR','ブランド','コミュニケーション'],          axisA:+2, axisB:+1, typeHint:2 },
-  { keywords:['事業開発','BD','アライアンス','パートナー','新規'],            axisA:+3, axisB:+1, typeHint:2 },
-  { keywords:['CFO','財務','経理','会計','投資','ファイナンス'],              solid:+3, axisB:-1, typeHint:3 },
-  { keywords:['法務','コンプライアンス','リスク','監査'],                     solid:+3, flex:-2,  typeHint:3 },
-  { keywords:['研究','R&D','専門','シニア','チーフ','スペシャリスト'],        axisA:-2, solid:+1, typeHint:4 },
-  { keywords:['HR','人事','組織','採用','人材','研修'],                       solid:+1, axisA:-1, typeHint:4 },
-  { keywords:['コンサル','戦略','アドバイザー'],                              axisA:+1, axisB:+1, typeHint:5 },
-  { keywords:['営業','セールス','カスタマー','CS'],                           flex:+1,  axisA:+1, typeHint:5 },
+  { keywords:['CTO','エンジニア','テック','開発','IT','DX','AI','デジタル'], axisB:+3, flex:+2, aiUse:+2, domains:+1 },
+  { keywords:['CEO','代表','社長','創業','スタートアップ','起業'],           axisB:+2, flex:+2, aiUse:+1, domains:+2 },
+  { keywords:['マーケ','広告','PR','ブランド','コミュニケーション'],          axisA:+2, axisB:+1, aiUse:+1, domains:+2 },
+  { keywords:['事業開発','BD','アライアンス','パートナー','新規'],            axisA:+3, axisB:+1, domains:+3 },
+  { keywords:['CFO','財務','経理','会計','投資','ファイナンス'],              solid:+3, axisB:-1, aiUse:-1 },
+  { keywords:['法務','コンプライアンス','リスク','監査'],                     solid:+3, flex:-2,  aiUse:-1 },
+  { keywords:['研究','R&D','専門','シニア','チーフ','スペシャリスト'],        axisA:-2, solid:+1, aiUse:+1 },
+  { keywords:['HR','人事','組織','採用','人材','研修'],                       solid:+1, axisA:-1, domains:-1 },
+  { keywords:['コンサル','戦略','アドバイザー'],                              axisA:+1, axisB:+1, aiUse:+1, domains:+1 },
+  { keywords:['営業','セールス','カスタマー','CS'],                           flex:+1,  axisA:+1, domains:+1 },
+  { keywords:['プロデューサー','ディレクター','クリエイター'],                axisA:+2, flex:+1,  aiUse:+1, domains:+2 },
+  { keywords:['投資','VC','ファンド','エンジェル'],                           axisA:+2, axisB:+1, domains:+3 },
 ];
 
-// ── 業界キーワード ───────────────────────────────────────────
+// ── 業界キーワードシグナル ────────────────────────────────────
 const INDUSTRY_SIGNALS = [
-  { keywords:['テック','IT','SaaS','ソフト','アプリ','クラウド','AI'],       axisB:+2, domains:+2 },
-  { keywords:['製造','工業','ものづくり','メーカー'],                         solid:+2, domains:-1 },
-  { keywords:['金融','銀行','保険','証券','投資'],                            solid:+2, axisB:-1  },
-  { keywords:['医療','ヘルス','バイオ','薬'],                                 solid:+1, domains:-1 },
-  { keywords:['教育','学校','研修','スクール'],                               axisA:+1, solid:+1  },
-  { keywords:['クリエイティブ','デザイン','広告','エンタメ','メディア'],      flex:+2,  axisB:+1  },
-  { keywords:['不動産','建設','建築'],                                        solid:+2, axisA:-1  },
-  { keywords:['小売','EC','流通','商社'],                                     axisA:+1, flex:+1   },
-  { keywords:['グローバル','海外','インバウンド','輸出'],                     axisA:+3, domains:+2 },
-  { keywords:['社会','SDGs','NPO','NGO','公共'],                             axisA:+2, axisB:+1  },
+  { keywords:['テック','IT','SaaS','ソフト','アプリ','クラウド','AI'],       axisB:+2, aiUse:+2, domains:+2 },
+  { keywords:['製造','工業','ものづくり','メーカー'],                         solid:+2, aiUse:-1, domains:-1 },
+  { keywords:['金融','銀行','保険','証券','投資'],                            solid:+2, axisB:-1, aiUse:0   },
+  { keywords:['フィンテック','Fintech'],                                      axisB:+2, aiUse:+2, domains:+1 },
+  { keywords:['医療','ヘルス','バイオ','薬'],                                 solid:+1, aiUse:+1, domains:-1 },
+  { keywords:['教育','学校','研修','スクール'],                               axisA:+1, solid:+1, domains:+1 },
+  { keywords:['クリエイティブ','デザイン','広告','エンタメ','メディア'],      flex:+2,  axisB:+1, aiUse:+1, domains:+2 },
+  { keywords:['不動産','建設','建築'],                                        solid:+2, axisA:-1, aiUse:-1  },
+  { keywords:['小売','EC','流通','商社'],                                     axisA:+1, flex:+1,  domains:+1 },
+  { keywords:['グローバル','海外','インバウンド','輸出'],                     axisA:+3, domains:+3 },
+  { keywords:['社会','SDGs','NPO','NGO','公共'],                             axisA:+2, axisB:+1, domains:+2 },
+  { keywords:['コンサル','シンクタンク'],                                     axisA:+2, axisB:+1, aiUse:+1, domains:+2 },
+  { keywords:['スタートアップ','ベンチャー'],                                 axisB:+2, flex:+2,  aiUse:+2, domains:+2 },
 ];
 
-// ── 年代による補正 ───────────────────────────────────────────
+// ── 年代×業界の交差補正テーブル（新規）──────────────────────
+// 若い世代×革新業界 → 特に革新・AI活用を上乗せ
+// 年配世代×伝統業界 → 堅実をさらに強化
+const AGE_INDUSTRY_CROSS = [
+  { ages:['20代','30代'], industries:['テック','IT','SaaS','AI','スタートアップ'], axisB:+2, aiUse:+2, flex:+1 },
+  { ages:['20代','30代'], industries:['クリエイティブ','デザイン','エンタメ'],     axisA:+1, flex:+1  },
+  { ages:['40代','50代'], industries:['製造','工業','金融','不動産'],              solid:+2, axisB:-1 },
+  { ages:['50代','60代以上'], industries:['製造','工業','建設'],                   solid:+3, flex:-1  },
+  { ages:['40代','50代','60代以上'], industries:['グローバル','海外'],             axisA:+1, domains:+1 },
+];
+
+// ── 年代による補正（aiUse追加）─────────────────────────────
 const AGE_PARAMS = {
-  '20代': { axisB:+2, flex:+2, solid:-1 },
-  '30代': { axisB:+1, flex:+1 },
-  '40代': { },
-  '50代': { solid:+1, axisB:-1 },
-  '60代以上': { solid:+2, axisB:-2, flex:-1 },
+  '20代':   { axisB:+2, flex:+2, solid:-1, aiUse:+2 },
+  '30代':   { axisB:+1, flex:+1,           aiUse:+1 },
+  '40代':   {                               aiUse:0  },
+  '50代':   { solid:+1, axisB:-1,          aiUse:-1 },
+  '60代以上':{ solid:+2, axisB:-2, flex:-1, aiUse:-2 },
 };
+
+// ── 年代の数値変換（年代差計算用）────────────────────────────
+const AGE_NUM = { '20代':1, '30代':2, '40代':3, '50代':4, '60代以上':5 };
 
 // ── タイプ別説明文テンプレート ──────────────────────────────
 const TYPE_ANALYSIS = {
@@ -425,94 +451,158 @@ function showMemberError(msg) {
 
 function nv(v){ return isNaN(Number(v))?0:Number(v); }
 
-// ── ゲスト情報からスコアをルールベース推定 ────────────────────
+// ════════════════════════════════════════════════════════════
+// ゲスト推定エンジン v2
+// 入力: 氏名/会社/業界/役職/年代 + クイズ3問
+// 出力: 6次元ベクトル（axisA/axisB/flex/solid/aiUse/domains）
+// ════════════════════════════════════════════════════════════
 function estimateGuest(name, company, industry, role, age, q1, q2, q3) {
-  // 基準値
-  let axisA=10, axisB=9, flex=5, solid=5, domains=5;
+  // ── 基準値 ──
+  let axisA=10, axisB=9, flex=5, solid=5, aiUse=3, domains=5;
 
-  // 役職シグナル
-  const roleStr = (role+' '+company).toLowerCase();
+  const roleStr = (role + ' ' + company).toLowerCase();
+  const indStr  = industry.toLowerCase();
+
+  // ── 役職シグナル ──
   for (const sig of ROLE_SIGNALS) {
     if (sig.keywords.some(k => roleStr.includes(k.toLowerCase()))) {
-      if (sig.axisA) axisA += sig.axisA;
-      if (sig.axisB) axisB += sig.axisB;
-      if (sig.flex)  flex  += sig.flex;
-      if (sig.solid) solid += sig.solid;
+      if (sig.axisA)   axisA   += sig.axisA;
+      if (sig.axisB)   axisB   += sig.axisB;
+      if (sig.flex)    flex    += sig.flex;
+      if (sig.solid)   solid   += sig.solid;
+      if (sig.aiUse)   aiUse   += sig.aiUse;
+      if (sig.domains) domains += sig.domains;
     }
   }
 
-  // 業界シグナル
-  const indStr = (industry).toLowerCase();
+  // ── 業界シグナル ──
   for (const sig of INDUSTRY_SIGNALS) {
     if (sig.keywords.some(k => indStr.includes(k.toLowerCase()))) {
       if (sig.axisA)   axisA   += sig.axisA;
       if (sig.axisB)   axisB   += sig.axisB;
       if (sig.flex)    flex    += sig.flex;
       if (sig.solid)   solid   += sig.solid;
+      if (sig.aiUse)   aiUse   += sig.aiUse;
       if (sig.domains) domains += sig.domains;
     }
   }
 
-  // 年代補正
+  // ── 年代補正 ──
   const ageAdj = AGE_PARAMS[age] || {};
   if (ageAdj.axisB)  axisB  += ageAdj.axisB;
   if (ageAdj.flex)   flex   += ageAdj.flex;
   if (ageAdj.solid)  solid  += ageAdj.solid;
+  if (ageAdj.aiUse)  aiUse  += ageAdj.aiUse;
 
-  // Q1: 行動スタイル（即断 vs 慎重 vs 合意）
-  // a=まず動く → flex↑ axisB↑（革新推進寄り）
-  // b=情報収集 → solid↑ flex↓（堅実寄り）
-  // c=相談合意 → axisA↑ domains↑（広域探索寄り）
-  if (q1 === 'a') { flex += 2; axisB += 1; }
+  // ── 年代×業界の交差補正 ──
+  for (const cross of AGE_INDUSTRY_CROSS) {
+    const ageMatch = cross.ages.includes(age);
+    const indMatch = cross.industries.some(k => indStr.includes(k.toLowerCase()));
+    if (ageMatch && indMatch) {
+      if (cross.axisB)  axisB  += cross.axisB;
+      if (cross.flex)   flex   += cross.flex;
+      if (cross.solid)  solid  += cross.solid;
+      if (cross.aiUse)  aiUse  += cross.aiUse;
+      if (cross.axisA)  axisA  += cross.axisA;
+      if (cross.domains)domains += cross.domains;
+    }
+  }
+
+  // ── クイズQ1: 行動スタイル（Q11意思決定スピード相当）──
+  // a=まず動く  → flex↑ axisB↑
+  // b=情報収集  → solid↑ flex↓
+  // c=相談合意  → axisA↑ domains↑
+  if      (q1 === 'a') { flex += 2; axisB += 1; }
   else if (q1 === 'b') { solid += 2; flex -= 1; }
   else if (q1 === 'c') { axisA += 2; domains += 1; }
 
-  // Q2: 真面目さ・規律感（締め切り姿勢）
-  // a=必ず守る → solid↑↑（堅実構築型強化）
-  // b=柔軟調整 → そのまま（バランス型補強）
-  // c=完成度優先 → axisB↑ flex↑（革新・クリエイティブ寄り）
-  if (q2 === 'a') { solid += 3; flex -= 1; }
-  else if (q2 === 'b') { /* 中間 */ }
+  // ── クイズQ2: 真面目さ・締め切り姿勢（Q12リスク相当）──
+  // a=必ず守る       → solid↑↑（Q12=1相当）
+  // b=柔軟調整       → バランス（Q12=3相当）
+  // c=完成度優先     → axisB↑ flex↑（Q12=5相当）
+  if      (q2 === 'a') { solid += 3; flex -= 1; }
   else if (q2 === 'c') { axisB += 1; flex += 1; solid -= 1; }
 
-  // Q3: 行動力・人脈スタイル
-  // a=即アポ → flex↑ axisB↑（推進力強）
-  // b=紹介経由 → axisA↑ domains↑（広域探索型）
-  // c=事前調査 → solid↑（慎重・専門深化寄り）
-  if (q3 === 'a') { flex += 2; axisB += 1; }
+  // ── クイズQ3: 人脈スタイル（Q8トレンド反応相当）──
+  // a=即アポ   → flex↑ axisB↑（Q8=5相当）
+  // b=紹介経由 → axisA↑ domains↑（Q8=3相当）
+  // c=事前調査 → solid↑（Q8=1相当）
+  if      (q3 === 'a') { flex += 2; axisB += 1; }
   else if (q3 === 'b') { axisA += 2; domains += 1; }
   else if (q3 === 'c') { solid += 1; axisA -= 1; }
 
-  // クランプ
-  axisA   = Math.max(0,  Math.min(20, axisA));
-  axisB   = Math.max(3,  Math.min(15, axisB));
-  flex    = Math.max(0,  Math.min(11, flex));
-  solid   = Math.max(0,  Math.min(11, solid));
-  domains = Math.max(1,  Math.min(12, domains));
+  // ── クランプ ──
+  axisA   = Math.max(0,  Math.min(20, Math.round(axisA)));
+  axisB   = Math.max(3,  Math.min(15, Math.round(axisB)));
+  flex    = Math.max(0,  Math.min(11, Math.round(flex)));
+  solid   = Math.max(0,  Math.min(11, Math.round(solid)));
+  aiUse   = Math.max(1,  Math.min(5,  Math.round(aiUse)));
+  domains = Math.max(1,  Math.min(12, Math.round(domains)));
 
-  // タイプ判定
+  // ── タイプ判定（改善版：aiUseも加味）──
   let typeId = 5;
-  if      (axisB >= 11 && flex >= 7)  typeId = 1;
-  else if (axisA >= 14)               typeId = 2;
-  else if (solid >= 7 && axisB <= 8)  typeId = 3;
-  else if (axisA <= 7)                typeId = 4;
+  if      (axisB >= 11 && flex >= 6 && aiUse >= 4) typeId = 1; // 革新推進
+  else if (axisB >= 10 && flex >= 6)                typeId = 1;
+  else if (axisA >= 14)                             typeId = 2; // 広域探索
+  else if (solid >= 7  && axisB <= 8)               typeId = 3; // 堅実構築
+  else if (axisA <= 7)                              typeId = 4; // 専門深化
 
-  const typeName = TYPES.find(t=>t.id===typeId)?.name || 'バランス型';
+  const typeName = TYPES.find(t => t.id === typeId)?.name || 'バランス型';
   const analyses = TYPE_ANALYSIS[typeId];
-  const analysis = analyses[Math.floor(Math.random()*analyses.length)];
+  const analysis = analyses[Math.floor(Math.random() * analyses.length)];
 
-  return { name, company, industry, role, age, axisA, axisB, flex, solid, domains, typeId, typeName, analysis };
+  return { name, company, industry, role, age,
+           axisA, axisB, flex, solid, aiUse, domains,
+           typeId, typeName, analysis };
 }
 
-// ── 相性スコア計算 ───────────────────────────────────────────
+// ════════════════════════════════════════════════════════════
+// 相性スコア計算エンジン v2（7要素・100点満点）
+// ① axisA 近接度     0-15点  関心の広さが近いほど高い
+// ② axisB 近接度     0-15点  革新指数が近いほど高い
+// ③ 柔軟×堅実補完   0-20点  互いに補い合う組み合わせを高く評価
+// ④ aiUse 近接度     0-10点  AI活用度の共鳴（新軸）
+// ⑤ ドメイン重複度   0-15点  関心領域の重なりを評価
+// ⑥ タイプボーナス   0-15点  タイプ組み合わせの相性
+// ⑦ 年代差補正       -5〜+10点  近い世代はボーナス、遠すぎるとペナルティ
+// ════════════════════════════════════════════════════════════
 function calcScore(g, m) {
-  const sA    = Math.round((1 - Math.abs(g.axisA - m.axisA) / 20) * 20);
-  const sB    = Math.round((1 - Math.abs(g.axisB - m.axisB) / 12) * 20);
-  const sC    = Math.round((Math.abs(g.flex - m.solid) + Math.abs(m.flex - g.solid)) / 20 * 25);
-  const maxD  = Math.max(g.domains, m.domains, 1);
-  const sD    = Math.round(Math.min(g.domains, m.domains) / maxD * 20);
+  // ① 関心の広さの近接度（0-15）
+  const sA = Math.round((1 - Math.abs(g.axisA - m.axisA) / 20) * 15);
+
+  // ② 革新指数の近接度（0-15）
+  const sB = Math.round((1 - Math.abs(g.axisB - m.axisB) / 12) * 15);
+
+  // ③ 柔軟×堅実の補完性（0-20）
+  // ゲストの柔軟がメンバーの堅実を補い、逆もしかり → 差が大きいほど補完
+  const sC = Math.round(
+    (Math.abs(g.flex - m.solid) + Math.abs(m.flex - g.solid)) / 22 * 20
+  );
+
+  // ④ AI活用度の近接度（0-10）
+  const gAI = g.aiUse  || 3;
+  const mAI = Number(m.axisB / 3) || 3; // メンバーのaxisB から近似（Q10相当）
+  const sAI = Math.round((1 - Math.abs(gAI - mAI) / 4) * 10);
+
+  // ⑤ ドメイン重複スコア（0-15）
+  const maxD = Math.max(g.domains, m.domains, 1);
+  const sD   = Math.round(Math.min(g.domains, m.domains) / maxD * 15);
+
+  // ⑥ タイプボーナス（0-15）
   const bonus = BONUS[`${g.typeId}_${m.typeId}`] ?? 8;
-  return Math.min(100, sA + sB + sC + sD + bonus);
+
+  // ⑦ 年代差補正（-5〜+10）
+  const gAgeN = AGE_NUM[g.age] || 3;
+  const mAgeN = AGE_NUM[m.age] || 3;
+  const ageDiff = Math.abs(gAgeN - mAgeN);
+  const sAge = ageDiff === 0 ? 3       // 同世代：小ボーナス
+             : ageDiff === 1 ? 10      // 1世代差：最大ボーナス（異世代刺激）
+             : ageDiff === 2 ? 5       // 2世代差：中ボーナス
+             : ageDiff === 3 ? 0       // 3世代差：補正なし
+             : -5;                     // 4世代差以上：ペナルティ
+
+  const total = sA + sB + sC + sAI + sD + bonus + sAge;
+  return Math.min(100, Math.max(0, total));
 }
 
 // ── 相性コメント取得 ─────────────────────────────────────────
