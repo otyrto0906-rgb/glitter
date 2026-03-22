@@ -74,11 +74,19 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 .radar-wrap{width:220px;height:180px;flex-shrink:0}
 
 /* ── Axes ── */
-.axes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
-.ax-name{font-size:10px;color:rgba(255,255,255,.32);letter-spacing:.08em;margin-bottom:5px}
-.ax-track{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
-.ax-fill{height:100%;border-radius:2px;background:var(--purple-2);transition:width 1.1s cubic-bezier(.4,0,.2,1)}
-.ax-val{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
+.axes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.ax-item{}
+.ax-label-row{display:flex;align-items:center;margin-bottom:6px}
+.ax-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;white-space:nowrap;transition:all .5s}
+.ax-badge-lo{background:rgba(29,112,96,.35);color:#78d4bc}
+.ax-badge-hi{background:rgba(80,70,200,.35);color:#b0a8f5}
+.ax-badge-mid{background:rgba(255,255,255,.1);color:rgba(255,255,255,.55)}
+.ax-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.ax-fill{height:100%;border-radius:2px;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+.ax-fill-hi{background:var(--purple-2)}
+.ax-fill-lo{background:#5dcaa5}
+.ax-fill-mid{background:rgba(255,255,255,.4)}
+.ax-sub{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.06em;margin-top:4px}
 
 /* ── Section ── */
 .sec{margin-bottom:36px;animation:fadeUp .5s ease both}
@@ -186,9 +194,21 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
         </div>
       </div>
       <div class="axes-row">
-        <div><div class="ax-name">関心の広さ</div><div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div><div class="ax-val" id="axAv"></div></div>
-        <div><div class="ax-name">革新指数</div><div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div><div class="ax-val" id="axBv"></div></div>
-        <div><div class="ax-name">行動スタイル</div><div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div><div class="ax-val" id="axCv"></div></div>
+        <div class="ax-item">
+          <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axALabel">—</span></div>
+          <div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div>
+          <div class="ax-sub">関心の幅</div>
+        </div>
+        <div class="ax-item">
+          <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axBLabel">—</span></div>
+          <div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div>
+          <div class="ax-sub">変化への姿勢</div>
+        </div>
+        <div class="ax-item">
+          <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axCLabel">—</span></div>
+          <div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div>
+          <div class="ax-sub">行動スタイル</div>
+        </div>
       </div>
     </div>
 
@@ -358,14 +378,7 @@ function showApp() {
   document.getElementById('pcAnalysis').textContent = analyses[0];
 
   // 軸バー
-  setTimeout(() => {
-    document.getElementById('axA').style.width  = (m.axisA / 20 * 100) + '%';
-    document.getElementById('axB').style.width  = ((m.axisB - 3) / 12 * 100) + '%';
-    document.getElementById('axC').style.width  = (m.flex / 11 * 100) + '%';
-    document.getElementById('axAv').textContent = m.axisA + ' / 20';
-    document.getElementById('axBv').textContent = m.axisB + ' / 15';
-    document.getElementById('axCv').textContent = m.flex  + ' / 11';
-  }, 60);
+  setTimeout(() => { renderAxesMember(m); }, 60);
 
   // レーダーチャート
   drawRadar(m);
@@ -380,6 +393,49 @@ function showApp() {
   renderMemberList();
 }
 
+// ── 軸定義（双極ラベル）────────────────────────────────────
+const AXIS_DEFS_M = [
+  { id:'A', lo:{label:'専門集中型',cls:'ax-badge-lo',fill:'ax-fill-lo',t:0.45},
+            hi:{label:'マルチ探索型',cls:'ax-badge-hi',fill:'ax-fill-hi',t:0.65},
+           mid:{label:'バランス型',cls:'ax-badge-mid',fill:'ax-fill-mid'},
+    ratio:(m) => m.axisA / 20 },
+  { id:'B', lo:{label:'王道実績派',cls:'ax-badge-lo',fill:'ax-fill-lo',t:0.40},
+            hi:{label:'革新先行派',cls:'ax-badge-hi',fill:'ax-fill-hi',t:0.60},
+           mid:{label:'実績×革新',cls:'ax-badge-mid',fill:'ax-fill-mid'},
+    ratio:(m) => (m.axisB - 3) / 12 },
+  { id:'C', lo:{label:'熟慮戦略型',cls:'ax-badge-lo',fill:'ax-fill-lo',t:0.40},
+            hi:{label:'即断行動型',cls:'ax-badge-hi',fill:'ax-fill-hi',t:0.60},
+           mid:{label:'状況判断型',cls:'ax-badge-mid',fill:'ax-fill-mid'},
+    ratio:(m) => m.flex / 11 },
+];
+
+function renderAxesMember(m) {
+  AXIS_DEFS_M.forEach(def => {
+    const r  = Math.max(0, Math.min(1, def.ratio(m)));
+    const chosen = r <= def.lo.t ? def.lo : r >= def.hi.t ? def.hi : def.mid;
+    const strength = r <= def.lo.t ? (1-r) : r >= def.hi.t ? r : 0.5;
+
+    const lbl = document.getElementById('ax'+def.id+'Label');
+    lbl.textContent = chosen.label;
+    lbl.className   = 'ax-badge ' + chosen.cls;
+
+    const fill = document.getElementById('ax'+def.id);
+    fill.className   = 'ax-fill ' + chosen.fill;
+    fill.style.width = Math.round(strength * 100) + '%';
+  });
+}
+
+function getRadarLabels(m) {
+  const defs = [
+    { ratio: m.axisA / 20,     lo:'専門集中', hi:'マルチ探索' },
+    { ratio:(m.axisB-3)/12,    lo:'王道実績', hi:'革新先行'   },
+    { ratio: m.flex / 11,      lo:'熟慮戦略', hi:'即断行動'   },
+    { ratio: m.solid / 11,     lo:'フレキシブル',hi:'堅実確実'  },
+    { ratio: m.axisB / 15,     lo:'対人重視', hi:'テック活用'  },
+  ];
+  return defs.map(d => d.ratio < 0.45 ? d.lo : d.ratio > 0.65 ? d.hi : '—');
+}
+
 // ── レーダーチャート ──────────────────────────────────────────
 function drawRadar(m) {
   if (radarChart) radarChart.destroy();
@@ -387,7 +443,7 @@ function drawRadar(m) {
   radarChart = new Chart(ctx, {
     type: 'radar',
     data: {
-      labels: ['関心の広さ', '革新指数', '行動速度', 'リスク許容', 'テック'],
+      labels: getRadarLabels(m),
       datasets: [{
         data: [
           Math.round(m.axisA / 20 * 10),
