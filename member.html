@@ -59,8 +59,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 .profile-card{background:var(--ink);color:var(--paper);border-radius:var(--r-xl);padding:32px;margin-bottom:32px;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
 .profile-card::before{content:'';position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--purple);opacity:.1}
 .profile-card::after{content:'';position:absolute;right:20px;bottom:-40px;width:120px;height:120px;border-radius:50%;background:var(--teal);opacity:.07}
-.pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.pc-left{}
+.pc-top{margin-bottom:16px}
 .pc-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(255,255,255,.3);margin-bottom:8px}
 .pc-name{font-family:'Shippori Mincho',serif;font-size:28px;font-weight:600;margin-bottom:4px}
 .pc-meta{font-size:13px;color:rgba(255,255,255,.48);margin-bottom:14px}
@@ -73,20 +72,17 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 .pc-analysis{font-size:13px;line-height:1.85;color:rgba(255,255,255,.76);border-top:1px solid rgba(255,255,255,.1);padding-top:16px;margin-top:16px}
 .radar-wrap{width:220px;height:180px;flex-shrink:0}
 
-/* ── Axes ── */
-.axes-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
-.ax-item{}
-.ax-label-row{display:flex;align-items:center;margin-bottom:6px}
-.ax-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;white-space:nowrap;transition:all .5s}
-.ax-badge-lo{background:rgba(29,112,96,.35);color:#78d4bc}
-.ax-badge-hi{background:rgba(80,70,200,.35);color:#b0a8f5}
-.ax-badge-mid{background:rgba(255,255,255,.1);color:rgba(255,255,255,.55)}
-.ax-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
-.ax-fill{height:100%;border-radius:2px;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
-.ax-fill-hi{background:var(--purple-2)}
-.ax-fill-lo{background:#5dcaa5}
-.ax-fill-mid{background:rgba(255,255,255,.4)}
-.ax-sub{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.06em;margin-top:4px}
+/* ── Profile body ── */
+.pc-body{display:grid;grid-template-columns:260px 1fr;gap:28px;margin-top:20px;align-items:start}
+@media(max-width:600px){.pc-body{grid-template-columns:1fr}}
+.radar-wrap{width:100%;height:240px}
+.traits-wrap{}
+.trait-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.trait-row:last-child{border-bottom:none}
+.trait-axis{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;width:64px;flex-shrink:0;padding-top:2px}
+.trait-content{}
+.trait-label{font-size:13px;font-weight:500;color:rgba(255,255,255,.88);margin-bottom:2px}
+.trait-desc{font-size:12px;color:rgba(255,255,255,.45);line-height:1.6}
 
 /* ── Section ── */
 .sec{margin-bottom:36px;animation:fadeUp .5s ease both}
@@ -182,33 +178,17 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
     <!-- プロフィールカード -->
     <div class="profile-card" id="profileCard">
       <div class="pc-top">
-        <div class="pc-left">
-          <div class="pc-label">YOUR PROFILE</div>
-          <div class="pc-name" id="pcName"></div>
-          <div class="pc-meta" id="pcMeta"></div>
-          <div class="type-pill t1" id="pcType"></div>
-          <div class="pc-analysis" id="pcAnalysis"></div>
-        </div>
+        <div class="pc-label">YOUR PROFILE</div>
+        <div class="pc-name" id="pcName"></div>
+        <div class="pc-meta" id="pcMeta"></div>
+        <div class="type-pill t1" id="pcType"></div>
+        <div class="pc-analysis" id="pcAnalysis"></div>
+      </div>
+      <div class="pc-body">
         <div class="radar-wrap">
           <canvas id="radarChart"></canvas>
         </div>
-      </div>
-      <div class="axes-row">
-        <div class="ax-item">
-          <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axALabel">—</span></div>
-          <div class="ax-track"><div class="ax-fill" id="axA" style="width:0%"></div></div>
-          <div class="ax-sub">関心の幅</div>
-        </div>
-        <div class="ax-item">
-          <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axBLabel">—</span></div>
-          <div class="ax-track"><div class="ax-fill" id="axB" style="width:0%"></div></div>
-          <div class="ax-sub">変化への姿勢</div>
-        </div>
-        <div class="ax-item">
-          <div class="ax-label-row"><span class="ax-badge ax-badge-mid" id="axCLabel">—</span></div>
-          <div class="ax-track"><div class="ax-fill" id="axC" style="width:0%"></div></div>
-          <div class="ax-sub">行動スタイル</div>
-        </div>
+        <div class="traits-wrap" id="traitsWrap"></div>
       </div>
     </div>
 
@@ -377,8 +357,8 @@ function showApp() {
   const analyses = TYPE_ANALYSIS[m.typeId] || TYPE_ANALYSIS[5];
   document.getElementById('pcAnalysis').textContent = analyses[0];
 
-  // 軸バー
-  setTimeout(() => { renderAxesMember(m); }, 60);
+  // トレイト表示
+  setTimeout(() => { renderTraits(m); }, 60);
 
   // レーダーチャート
   drawRadar(m);
@@ -393,47 +373,103 @@ function showApp() {
   renderMemberList();
 }
 
-// ── 軸定義（双極ラベル）────────────────────────────────────
-const AXIS_DEFS_M = [
-  { id:'A', lo:{label:'専門集中型',cls:'ax-badge-lo',fill:'ax-fill-lo',t:0.45},
-            hi:{label:'マルチ探索型',cls:'ax-badge-hi',fill:'ax-fill-hi',t:0.65},
-           mid:{label:'バランス型',cls:'ax-badge-mid',fill:'ax-fill-mid'},
-    ratio:(m) => m.axisA / 20 },
-  { id:'B', lo:{label:'王道実績派',cls:'ax-badge-lo',fill:'ax-fill-lo',t:0.40},
-            hi:{label:'革新先行派',cls:'ax-badge-hi',fill:'ax-fill-hi',t:0.60},
-           mid:{label:'実績×革新',cls:'ax-badge-mid',fill:'ax-fill-mid'},
-    ratio:(m) => (m.axisB - 3) / 12 },
-  { id:'C', lo:{label:'熟慮戦略型',cls:'ax-badge-lo',fill:'ax-fill-lo',t:0.40},
-            hi:{label:'即断行動型',cls:'ax-badge-hi',fill:'ax-fill-hi',t:0.60},
-           mid:{label:'状況判断型',cls:'ax-badge-mid',fill:'ax-fill-mid'},
-    ratio:(m) => m.flex / 11 },
+// ── 5軸の固定定義とトレイト文言 ──────────────────────────────
+// 各軸にスコア帯ごとの「ラベル名」と「説明文」を持たせる
+const TRAIT_DEFS = [
+  {
+    name: '関心の幅',
+    key: (m) => m.axisA / 20,
+    bands: [
+      { max:0.35, label:'専門集中型', color:'#5dcaa5',
+        desc:'一点突破の深さが強み。特定領域で圧倒的な専門性を発揮します。' },
+      { max:0.55, label:'バランス探索型', color:'rgba(255,255,255,.6)',
+        desc:'専門性を持ちながら周辺領域も押さえる、バランスのよいスタイルです。' },
+      { max:0.75, label:'クロスオーバー型', color:'#b0a8f5',
+        desc:'複数領域をまたぐ視野を持ち、異なる分野をつなぐ力があります。' },
+      { max:1.01, label:'マルチ探索型', color:'#7b72e0',
+        desc:'幅広い関心から新しいつながりを生み出す、ネットワーク型の思考が特徴です。' },
+    ],
+  },
+  {
+    name: '変化への姿勢',
+    key: (m) => (m.axisB - 3) / 12,
+    bands: [
+      { max:0.35, label:'実績積み上げ派', color:'#5dcaa5',
+        desc:'実証済みの方法を着実に積み上げ、信頼される成果を出し続けます。' },
+      { max:0.55, label:'検証採用派', color:'rgba(255,255,255,.6)',
+        desc:'新しいものを試しながらも、実績で裏付けてから本格導入するスタイルです。' },
+      { max:0.75, label:'早期採用派', color:'#b0a8f5',
+        desc:'新しいトレンドをいち早く取り入れ、変化をチャンスとして捉えます。' },
+      { max:1.01, label:'革新先行派', color:'#7b72e0',
+        desc:'常に最先端を走り、業界の変化を自ら生み出そうとする姿勢が強みです。' },
+    ],
+  },
+  {
+    name: '意思決定スタイル',
+    key: (m) => m.flex / 11,
+    bands: [
+      { max:0.35, label:'熟慮戦略型', color:'#5dcaa5',
+        desc:'情報を十分に集めてから動く慎重さが強み。リスクを最小化した実行ができます。' },
+      { max:0.55, label:'状況判断型', color:'rgba(255,255,255,.6)',
+        desc:'状況に応じて熟慮と直感を使い分ける、バランスのよい判断力があります。' },
+      { max:0.75, label:'機敏対応型', color:'#b0a8f5',
+        desc:'素早い判断でチャンスをつかみ、スピード感のある実行力が武器です。' },
+      { max:1.01, label:'即断行動型', color:'#7b72e0',
+        desc:'直感と行動力で局面を切り開く。スタートアップ的なスピードが強みです。' },
+    ],
+  },
+  {
+    name: '堅実さ・確実性',
+    key: (m) => m.solid / 11,
+    bands: [
+      { max:0.35, label:'柔軟適応型', color:'#5dcaa5',
+        desc:'状況の変化に柔軟に対応し、既成概念にとらわれない動き方ができます。' },
+      { max:0.55, label:'バランス構築型', color:'rgba(255,255,255,.6)',
+        desc:'柔軟性と確実性のバランスを保ちながら、着実に前進します。' },
+      { max:0.75, label:'信頼構築型', color:'#b0a8f5',
+        desc:'約束を守り着実に積み上げる姿勢が、長期的な信頼関係を育みます。' },
+      { max:1.01, label:'堅実完遂型', color:'#7b72e0',
+        desc:'高い規律と完遂力で、確実な成果を出し続ける安定感が最大の強みです。' },
+    ],
+  },
+  {
+    name: 'テック・革新活用',
+    key: (m) => m.axisB / 15,
+    bands: [
+      { max:0.40, label:'対話・信頼重視', color:'#5dcaa5',
+        desc:'テクノロジーより人との直接対話を重視。人間力でビジネスを動かします。' },
+      { max:0.60, label:'選択活用型', color:'rgba(255,255,255,.6)',
+        desc:'必要なときに適切なツールを選んで活用する、実用主義的なスタンスです。' },
+      { max:0.80, label:'テック推進型', color:'#b0a8f5',
+        desc:'テクノロジーを積極的に活用し、業務や価値提供を効率化・進化させます。' },
+      { max:1.01, label:'テック先端型', color:'#7b72e0',
+        desc:'最新技術をいち早く取り入れ、デジタルで新しい価値を創造します。' },
+    ],
+  },
 ];
 
-function renderAxesMember(m) {
-  AXIS_DEFS_M.forEach(def => {
-    const r  = Math.max(0, Math.min(1, def.ratio(m)));
-    const chosen = r <= def.lo.t ? def.lo : r >= def.hi.t ? def.hi : def.mid;
-    const strength = r <= def.lo.t ? (1-r) : r >= def.hi.t ? r : 0.5;
-
-    const lbl = document.getElementById('ax'+def.id+'Label');
-    lbl.textContent = chosen.label;
-    lbl.className   = 'ax-badge ' + chosen.cls;
-
-    const fill = document.getElementById('ax'+def.id);
-    fill.className   = 'ax-fill ' + chosen.fill;
-    fill.style.width = Math.round(strength * 100) + '%';
-  });
+function getTraitForAxis(def, m) {
+  const ratio = Math.max(0, Math.min(1, def.key(m)));
+  return def.bands.find(b => ratio < b.max) || def.bands[def.bands.length - 1];
 }
 
+function renderTraits(m) {
+  const wrap = document.getElementById('traitsWrap');
+  wrap.innerHTML = TRAIT_DEFS.map(def => {
+    const t = getTraitForAxis(def, m);
+    return `<div class="trait-row">
+      <div class="trait-axis">${def.name}</div>
+      <div class="trait-content">
+        <div class="trait-label" style="color:${t.color}">${t.label}</div>
+        <div class="trait-desc">${t.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// レーダーチャートは固定ラベル5軸で表示
 function getRadarLabels(m) {
-  const defs = [
-    { ratio: m.axisA / 20,     lo:'専門集中', hi:'マルチ探索' },
-    { ratio:(m.axisB-3)/12,    lo:'王道実績', hi:'革新先行'   },
-    { ratio: m.flex / 11,      lo:'熟慮戦略', hi:'即断行動'   },
-    { ratio: m.solid / 11,     lo:'フレキシブル',hi:'堅実確実'  },
-    { ratio: m.axisB / 15,     lo:'対人重視', hi:'テック活用'  },
-  ];
-  return defs.map(d => d.ratio < 0.45 ? d.lo : d.ratio > 0.65 ? d.hi : '—');
+  return ['関心の幅', '変化への姿勢', '意思決定', '堅実さ', 'テック活用'];
 }
 
 // ── レーダーチャート ──────────────────────────────────────────
