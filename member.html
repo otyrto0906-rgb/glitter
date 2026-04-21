@@ -113,6 +113,43 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 .score-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--purple-2));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
 .mc-reason{font-size:12px;line-height:1.75;color:var(--ink-2);border-top:1px solid var(--paper-3);padding-top:8px}
 
+/* ── Matrix ── */
+.matrix-card{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-lg);padding:20px;animation:fadeUp .4s ease both}
+.matrix-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-3);margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.matrix-legend{display:flex;gap:10px;flex-wrap:wrap}
+.matrix-legend span{display:inline-flex;align-items:center;gap:4px;font-size:11px}
+.matrix-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.matrix-wrap{overflow-x:auto;margin-bottom:16px;padding-bottom:4px}
+.matrix-table{border-collapse:separate;border-spacing:2px;font-family:'DM Sans',sans-serif;font-size:11px}
+.matrix-table .corner{background:transparent}
+.matrix-table .col-head{vertical-align:bottom;padding:2px 0;text-align:center}
+.matrix-table .col-head div{writing-mode:vertical-rl;text-orientation:mixed;display:inline-block;font-family:'Shippori Mincho',serif;font-size:11px;white-space:nowrap;color:var(--ink-2);cursor:pointer;padding:2px;line-height:1.1;transition:color .15s}
+.matrix-table .col-head div:hover{color:var(--purple)}
+.matrix-table .row-head{text-align:right;padding-right:10px;font-family:'Shippori Mincho',serif;font-size:12px;color:var(--ink-2);white-space:nowrap;cursor:pointer;transition:color .15s}
+.matrix-table .row-head:hover{color:var(--purple)}
+.matrix-table .cell{text-align:center;font-weight:500;cursor:pointer;border-radius:4px;font-family:'DM Mono',monospace;transition:transform .1s}
+.matrix-table .cell:hover{transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,.12);position:relative;z-index:1}
+.matrix-table .self{background:repeating-linear-gradient(45deg,var(--paper-2),var(--paper-2) 3px,transparent 3px,transparent 6px)}
+.matrix-detail{padding:16px;background:var(--paper-2);border-radius:var(--r);font-size:13px;min-height:100px}
+.matrix-detail .md-empty{color:var(--ink-3)}
+.matrix-detail .md-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.matrix-detail .md-title{font-family:'Shippori Mincho',serif;font-size:15px;font-weight:600;color:var(--ink)}
+.matrix-detail .md-score{padding:4px 12px;border-radius:20px;font-weight:500;font-size:13px;font-family:'DM Mono',monospace}
+.matrix-detail .md-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media(max-width:600px){.matrix-detail .md-metrics{grid-template-columns:repeat(2,1fr)}}
+.matrix-detail .md-metric{padding:10px 12px;background:var(--paper);border:1px solid var(--paper-3);border-radius:8px}
+.matrix-detail .md-metric-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--ink-3);letter-spacing:.04em;margin-bottom:4px}
+.matrix-detail .md-metric-val{font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--ink);margin-bottom:6px}
+.matrix-detail .md-metric-val span{font-size:10px;color:var(--ink-4)}
+.matrix-detail .md-metric-bar{height:3px;background:var(--paper-3);border-radius:2px;overflow:hidden}
+.matrix-detail .md-metric-bar-fill{height:100%;background:var(--purple);border-radius:2px}
+.matrix-detail .md-rank-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.matrix-detail .md-rank-sub{font-size:11px;color:var(--ink-3)}
+.matrix-detail .md-rank-list{display:flex;flex-direction:column;gap:6px}
+.matrix-detail .md-rank-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--paper);border:1px solid var(--paper-3);border-radius:8px;font-size:13px}
+.matrix-detail .md-rank-name{font-family:'Shippori Mincho',serif;font-weight:500}
+.matrix-detail .md-rank-score{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding:2px 8px;border-radius:12px}
+
 /* ── Member list ── */
 .member-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
 .ml-card{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-lg);padding:14px 16px}
@@ -128,6 +165,39 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .nav-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-family:'Shippori Mincho',serif;font-size:13px;font-weight:600;color:var(--purple);background:var(--purple-lt);border:1px solid rgba(80,70,200,.2);border-radius:20px;cursor:pointer;text-decoration:none;transition:background .15s,transform .1s;letter-spacing:.04em}
 .nav-btn:hover{background:#dddafc;transform:translateY(-1px)}
+
+/* ── Algorithm ── */
+.algo-card{background:var(--paper);border:1px solid var(--paper-3);border-radius:var(--r-lg);padding:32px 28px;animation:fadeUp .4s ease both}
+.algo-message{text-align:center;padding:4px 0 28px;border-bottom:1px solid var(--paper-3);margin-bottom:28px}
+.algo-message-ja{font-family:'Shippori Mincho',serif;font-size:19px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.6;letter-spacing:.02em}
+.algo-message-ja em{font-style:normal;color:var(--purple)}
+.algo-message-sub{font-size:13px;color:var(--ink-2);line-height:1.9;max-width:520px;margin:0 auto}
+.algo-section{margin-bottom:32px}
+.algo-section:last-of-type{margin-bottom:0}
+.algo-section-title{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:16px;letter-spacing:.04em}
+.algo-section-title::before{content:'';display:inline-block;width:3px;height:12px;background:var(--purple);margin-right:8px;vertical-align:middle;border-radius:2px}
+.algo-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.algo-bar-row{display:grid;grid-template-columns:140px 1fr 44px;align-items:center;gap:14px}
+@media(max-width:600px){.algo-bar-row{grid-template-columns:110px 1fr 36px;gap:10px}}
+.algo-bar-label{font-size:12px;color:var(--ink-2);font-weight:500}
+.algo-bar-wrap{height:8px;background:var(--paper-2);border-radius:4px;overflow:hidden}
+.algo-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--purple-2));border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.algo-bar-val{font-family:'DM Mono',monospace;font-size:12px;color:var(--purple);text-align:right;font-weight:500}
+.algo-notes{font-size:11.5px;color:var(--ink-3);line-height:1.9;padding:12px 14px;background:var(--paper-2);border-radius:8px;margin-top:16px}
+.algo-notes b{color:var(--ink-2);font-weight:500}
+.algo-band-list{display:flex;flex-direction:column;gap:12px}
+.algo-band{display:grid;grid-template-columns:110px 70px 1fr;gap:16px;align-items:center;padding:16px 18px;background:var(--paper-2);border-radius:var(--r);border-left:3px solid var(--paper-3)}
+.algo-band.k{border-left-color:var(--purple)}
+.algo-band.h{border-left-color:var(--teal)}
+.algo-band.o{border-left-color:var(--gold)}
+@media(max-width:600px){.algo-band{grid-template-columns:1fr;gap:6px;padding:14px 16px}.algo-band-range{margin-bottom:4px}}
+.algo-band-badge{font-size:12px;padding:5px 10px;border-radius:20px;font-weight:500;text-align:center;justify-self:start}
+.algo-band-range{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+.algo-band-text{font-size:13px;color:var(--ink-2);line-height:1.85}
+.algo-band-text b{color:var(--ink);font-weight:500}
+.algo-band-text mark{background:var(--purple-lt);color:var(--purple);padding:1px 4px;border-radius:3px;font-weight:500}
+.algo-close{margin-top:28px;padding:18px 20px;background:var(--ink);color:rgba(255,255,255,.82);border-radius:var(--r);font-family:'Shippori Mincho',serif;font-size:14px;line-height:1.9;text-align:center;letter-spacing:.02em}
+.algo-close em{font-style:normal;color:#b0a8f5}
 </style>
 </head>
 <body>
@@ -201,6 +271,30 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
       <div class="match-grid" id="matchGrid"></div>
     </div>
 
+    <!-- 全員×全員 相性マトリクス -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <div class="sec-title">全員 × 全員 相性マトリクス</div>
+        <div class="sec-pill" id="matrixCount"></div>
+      </div>
+      <div class="matrix-card">
+        <div class="matrix-info">
+          <div id="matrixHover">セルをクリックで内訳 / 名前をクリックでベスト5が見られます</div>
+          <div class="matrix-legend">
+            <span><i style="background:#5046c8"></i>◎ 80+</span>
+            <span><i style="background:#7b72e0"></i>◯ 65–79</span>
+            <span><i style="background:#b0a8f5"></i>55–64</span>
+            <span><i style="background:#edeae3"></i>45–54</span>
+            <span><i style="background:#fce5e0"></i>△ –44</span>
+          </div>
+        </div>
+        <div class="matrix-wrap" id="matrixWrap"></div>
+        <div class="matrix-detail" id="matrixDetail">
+          <div class="md-empty">セル・名前をクリックすると詳細が表示されます。</div>
+        </div>
+      </div>
+    </div>
+
     <!-- メンバー一覧 -->
     <div class="sec">
       <div class="sec-hdr">
@@ -208,6 +302,93 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
         <div class="sec-pill" id="memberCount"></div>
       </div>
       <div class="member-list" id="memberList"></div>
+    </div>
+
+    <!-- アルゴリズム説明 -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <div class="sec-title">相性スコアの読み解き方</div>
+        <div class="sec-pill">ABOUT</div>
+      </div>
+      <div class="algo-card">
+
+        <div class="algo-message">
+          <div class="algo-message-ja">相性スコアは<em>合う・合わない</em>を決めるものではありません。</div>
+          <div class="algo-message-sub">数値が低いのは、相手の世界があなたと違う風景を持っているというサイン。その違いこそが、これからの関係を豊かにするきっかけになります。</div>
+        </div>
+
+        <div class="algo-section">
+          <div class="algo-section-title">5つの指標で算出（100点満点）</div>
+          <div class="algo-bars">
+            <div class="algo-bar-row">
+              <div class="algo-bar-label">関心の幅 近接</div>
+              <div class="algo-bar-wrap"><div class="algo-bar" style="width:80%"></div></div>
+              <div class="algo-bar-val">20</div>
+            </div>
+            <div class="algo-bar-row">
+              <div class="algo-bar-label">変化姿勢 近接</div>
+              <div class="algo-bar-wrap"><div class="algo-bar" style="width:80%"></div></div>
+              <div class="algo-bar-val">20</div>
+            </div>
+            <div class="algo-bar-row">
+              <div class="algo-bar-label">柔軟 × 堅実 補完</div>
+              <div class="algo-bar-wrap"><div class="algo-bar" style="width:100%"></div></div>
+              <div class="algo-bar-val">25</div>
+            </div>
+            <div class="algo-bar-row">
+              <div class="algo-bar-label">活動領域 重複</div>
+              <div class="algo-bar-wrap"><div class="algo-bar" style="width:80%"></div></div>
+              <div class="algo-bar-val">20</div>
+            </div>
+            <div class="algo-bar-row">
+              <div class="algo-bar-label">タイプ親和</div>
+              <div class="algo-bar-wrap"><div class="algo-bar" style="width:60%"></div></div>
+              <div class="algo-bar-val">15</div>
+            </div>
+          </div>
+          <div class="algo-notes">
+            <b>近接</b>：2人の立ち位置がどれだけ近いかを見る指標。近いほど共通の話題や判断軸が揃いやすくなります。<br>
+            <b>補完</b>：片方の柔軟さと、もう片方の堅実さのように、足りないところを埋め合える度合い。違いが大きいほど高く出ます。<br>
+            <b>タイプ親和</b>：5タイプの組み合わせごとに、経験則から得られた相性補正を加えます。
+          </div>
+        </div>
+
+        <div class="algo-section">
+          <div class="algo-section-title">スコアと、おすすめの関わり方</div>
+          <div class="algo-band-list">
+
+            <div class="algo-band k">
+              <div class="algo-band-badge ct-k">◎ 共鳴型</div>
+              <div class="algo-band-range">80 〜 100</div>
+              <div class="algo-band-text">
+                <b>自然に響き合う関係。</b>同じ言語で深く語り合え、共同プロジェクトの推進力になりやすい組み合わせです。迷わず声をかけて、一緒に新しいことを始めてみましょう。
+              </div>
+            </div>
+
+            <div class="algo-band h">
+              <div class="algo-band-badge ct-h">◯ 補完型</div>
+              <div class="algo-band-range">55 〜 79</div>
+              <div class="algo-band-text">
+                <b>違いが強みになる関係。</b>得意分野や視点が少しずつずれているからこそ、お互いの欠けているところを埋め合えます。役割を明確にすると、独りではできない仕事ができます。
+              </div>
+            </div>
+
+            <div class="algo-band o">
+              <div class="algo-band-badge ct-o">△ 対話型</div>
+              <div class="algo-band-range">〜 54</div>
+              <div class="algo-band-text">
+                <b>じっくり育てる関係。</b>スコアが低いのは、相手の考え方や歩んできた道があなたとは大きく違うというだけのこと。<mark>合わない相手ではなく、今はまだ知らない相手</mark>です。まずは相手の話を聞くことから始めて、背景や想いに寄り添ってみてください。違うからこそ、あなたにない気づきをもらえる関係になります。
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="algo-close">
+          数値はあくまで<em>関わりのきっかけ</em>。<br>コミュニティを豊かにするのは、一人ひとりの行動と想いです。
+        </div>
+
+      </div>
     </div>
   </div>
 </div>
@@ -218,7 +399,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:32p
 // ════════════════════════════════════════════════════════════
 const CONFIG = {
   API_URL  : 'https://script.google.com/macros/s/AKfycbzMHyTT6uq8YR1iZPNn6PunpYYYZh4N_bAoQQllEdwtytAlRJeZFdSldCXZ6wfvimlb/exec',
-  PASSWORD : 'glitter2026',   // ← 共通パスワードをここで変更
+  PASSWORD : 'glitter2026',   // ← 共通パスワードをここで変更（※ gLitter なので L！）
 };
 // ════════════════════════════════════════════════════════════
 // ▲▲▲  運営者設定エリア  ▲▲▲
@@ -369,12 +550,14 @@ function showApp() {
     .sort((a, b) => b.score - a.score).slice(0, 7);
   renderTop7(scored, m);
 
+  // マトリクス
+  renderMatrix();
+
   // メンバー一覧
   renderMemberList();
 }
 
 // ── 5軸の固定定義とトレイト文言 ──────────────────────────────
-// 各軸にスコア帯ごとの「ラベル名」と「説明文」を持たせる
 const TRAIT_DEFS = [
   {
     name: '関心の幅',
@@ -467,7 +650,6 @@ function renderTraits(m) {
   }).join('');
 }
 
-// レーダーチャートは固定ラベル5軸で表示
 function getRadarLabels(m) {
   return ['関心の幅', '変化への姿勢', '意思決定', '堅実さ', 'テック活用'];
 }
@@ -524,6 +706,16 @@ function calcScore(a, b) {
   return Math.min(100, sA + sB + sC + sD + bonus);
 }
 
+function calcBreakdown(a, b) {
+  const sA    = Math.round((1 - Math.abs(a.axisA - b.axisA) / 20) * 20);
+  const sB    = Math.round((1 - Math.abs(a.axisB - b.axisB) / 12) * 20);
+  const sC    = Math.round((Math.abs(a.flex - b.solid) + Math.abs(b.flex - a.solid)) / 20 * 25);
+  const maxD  = Math.max(a.domains, b.domains, 1);
+  const sD    = Math.round(Math.min(a.domains, b.domains) / maxD * 20);
+  const bonus = BONUS[`${a.typeId}_${b.typeId}`] ?? 8;
+  return { sA, sB, sC, sD, bonus, total: Math.min(100, sA + sB + sC + sD + bonus) };
+}
+
 function getComment(aId, bId, score) {
   const arr = COMPAT_COMMENTS[`${aId}_${bId}`] || ['ビジネスの接点を見つけ、新しい関係を築けます。','様々な場面でのコラボレーションが期待されます。','互いの強みを活かせる場面を探しましょう。'];
   return arr[score >= 80 ? 0 : score >= 55 ? 1 : 2];
@@ -537,7 +729,7 @@ function renderTop7(scored, me) {
 
   scored.forEach((m, i) => {
     const rank   = i + 1;
-    const compat = m.score >= 80 ? '◎ 共鳴型' : m.score >= 55 ? '◯ 補完型' : '△ 要調整';
+    const compat = m.score >= 80 ? '◎ 共鳴型' : m.score >= 55 ? '◯ 補完型' : '△ 対話型';
     const ctCls  = m.score >= 80 ? 'ct-k' : m.score >= 55 ? 'ct-h' : 'ct-o';
     const rbCls  = rank===1?'rb-1':rank===2?'rb-2':rank===3?'rb-3':'rb-n';
     const comment = getComment(me.typeId, m.typeId, m.score);
@@ -564,6 +756,130 @@ function renderTop7(scored, me) {
     }, 100 + i * 60);
   });
 }
+
+// ── マトリクス：色と判定 ─────────────────────────────────────
+function matrixColor(s) {
+  if (s >= 80) return { bg:'#5046c8', fg:'#ffffff' };
+  if (s >= 72) return { bg:'#7b72e0', fg:'#ffffff' };
+  if (s >= 65) return { bg:'#9e95ea', fg:'#ffffff' };
+  if (s >= 55) return { bg:'#b0a8f5', fg:'#2a1f6e' };
+  if (s >= 50) return { bg:'#d7d3f2', fg:'#48443e' };
+  if (s >= 45) return { bg:'#edeae3', fg:'#48443e' };
+  return { bg:'#fce5e0', fg:'#8a3020' };
+}
+function matrixType(s) {
+  return s >= 80 ? '◎ 共鳴型' : s >= 55 ? '◯ 補完型' : '△ 対話型';
+}
+
+// ── マトリクス レンダリング ───────────────────────────────────
+function renderMatrix() {
+  document.getElementById('matrixCount').textContent = MEMBERS.length + ' 名';
+  const wrap = document.getElementById('matrixWrap');
+  if (!MEMBERS.length) { wrap.innerHTML = '<div style="padding:20px;color:var(--ink-3);font-size:12px">データ読込中…</div>'; return; }
+
+  // メンバー数に応じてセルサイズを調整
+  const n = MEMBERS.length;
+  const cellSize = n <= 12 ? 36 : n <= 18 ? 32 : n <= 24 ? 28 : 24;
+  const labelW = 100;
+  const labelH = n <= 12 ? 90 : 100;
+
+  let h = '<table class="matrix-table">';
+  // ヘッダー行
+  h += `<tr><td class="corner" style="width:${labelW}px;height:${labelH}px"></td>`;
+  MEMBERS.forEach((mb, j) => {
+    h += `<td class="col-head" style="width:${cellSize}px;height:${labelH}px"><div onclick="showMatrixRank(${j},false)" style="height:${labelH-4}px">${mb.name}</div></td>`;
+  });
+  h += '</tr>';
+
+  // データ行
+  MEMBERS.forEach((ma, i) => {
+    h += `<tr>`;
+    h += `<td class="row-head" style="width:${labelW}px;height:${cellSize}px" onclick="showMatrixRank(${i},true)">${ma.name}</td>`;
+    MEMBERS.forEach((mb, j) => {
+      if (i === j) {
+        h += `<td class="self" style="width:${cellSize}px;height:${cellSize}px"></td>`;
+      } else {
+        const score = calcScore(ma, mb);
+        const c = matrixColor(score);
+        const fontSize = cellSize >= 32 ? 12 : 11;
+        h += `<td class="cell" onclick="showMatrixCell(${i},${j})" onmouseenter="hoverMatrixCell(${i},${j})" style="width:${cellSize}px;height:${cellSize}px;background:${c.bg};color:${c.fg};font-size:${fontSize}px">${score}</td>`;
+      }
+    });
+    h += '</tr>';
+  });
+  h += '</table>';
+  wrap.innerHTML = h;
+}
+
+window.hoverMatrixCell = function(i, j) {
+  const a = MEMBERS[i], b = MEMBERS[j];
+  const score = calcScore(a, b);
+  document.getElementById('matrixHover').textContent = `${a.name} → ${b.name}：${score} (${matrixType(score)})`;
+};
+
+window.showMatrixCell = function(i, j) {
+  const a = MEMBERS[i], b = MEMBERS[j];
+  const bd = calcBreakdown(a, b);
+  const c = matrixColor(bd.total);
+  const metrics = [
+    ['関心の幅 近接', bd.sA, 20],
+    ['変化姿勢 近接', bd.sB, 20],
+    ['柔軟×堅実 補完', bd.sC, 25],
+    ['活動領域 重複', bd.sD, 20],
+    ['タイプ親和', bd.bonus, 15],
+  ];
+  const comment = getComment(a.typeId, b.typeId, bd.total);
+  const detail = document.getElementById('matrixDetail');
+  detail.innerHTML = `
+    <div class="md-head">
+      <div class="md-title">${a.name} × ${b.name}</div>
+      <div class="md-score" style="background:${c.bg};color:${c.fg}">${bd.total} / 100 · ${matrixType(bd.total)}</div>
+    </div>
+    <div style="font-size:12px;color:var(--ink-2);line-height:1.7;margin-bottom:14px;padding:10px 12px;background:var(--paper);border-radius:8px;border-left:3px solid var(--purple)">${comment}</div>
+    <div class="md-metrics">
+      ${metrics.map(m => {
+        const pct = Math.round(m[1]/m[2]*100);
+        return `<div class="md-metric">
+          <div class="md-metric-label">${m[0]}</div>
+          <div class="md-metric-val">${m[1]}<span> / ${m[2]}</span></div>
+          <div class="md-metric-bar"><div class="md-metric-bar-fill" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+};
+
+window.showMatrixRank = function(idx, asRow) {
+  const me = MEMBERS[idx];
+  const others = MEMBERS.filter((_, i) => i !== idx);
+  const scored = others.map(o => {
+    const score = asRow ? calcScore(me, o) : calcScore(o, me);
+    return { m: o, score };
+  }).sort((x, y) => y.score - x.score);
+  const top = scored.slice(0, 5);
+
+  const detail = document.getElementById('matrixDetail');
+  detail.innerHTML = `
+    <div class="md-rank-head">
+      <div class="md-title">${me.name} のベスト 5</div>
+      <div class="md-rank-sub">${asRow ? '自分から見た相性' : '相手から見られた相性'}</div>
+    </div>
+    <div class="md-rank-list">
+      ${top.map((t, i) => {
+        const c = matrixColor(t.score);
+        const rankSym = ['①','②','③','④','⑤'][i];
+        return `<div class="md-rank-row">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-3);width:18px">${rankSym}</span>
+            <span class="md-rank-name">${t.m.name}</span>
+            <span style="font-size:11px;color:var(--ink-3)">${t.m.typeName || ''}</span>
+          </div>
+          <span class="md-rank-score" style="background:${c.bg};color:${c.fg}">${t.score}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+};
 
 // ── メンバー一覧 レンダリング ─────────────────────────────────
 function renderMemberList() {
